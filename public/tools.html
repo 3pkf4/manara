@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<title>المنارة — الوردية والأدوات</title>
+<link rel="manifest" href="/manifest.json">
+<script src="/js/save-file.js"></script>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#fff; --text:#1c2333; --muted:#6b7280; --line:#e3e7ef;
+  --pri:#12315c; --pri-ink:#fff; --ok:#16a34a; --warn:#d97706; --bad:#dc2626;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0f1420; --card:#171e2e; --text:#e8ecf5; --muted:#93a0b8; --line:#26304a; --pri:#2a5db0; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:17px;margin:0;flex:1}
+a.back{color:var(--pri);text-decoration:none;font-weight:600}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer}
+nav.tabs button.on{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+main{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+.field{flex:1;min-width:140px}
+button.btn{padding:10px 16px;border:0;border-radius:10px;background:var(--pri);color:var(--pri-ink);font:inherit;font-weight:600;cursor:pointer}
+button.btn.sec{background:transparent;color:var(--text);border:1px solid var(--line)}
+button.btn.bad{background:var(--bad)}
+button.btn:disabled{opacity:.55;cursor:wait}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+.table-wrap{overflow-x:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-size:20px}
+.kpi span{font-size:12px;color:var(--muted)}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;background:var(--bg);border:1px solid var(--line)}
+.tag.ok{color:var(--ok)} .tag.bad{color:var(--bad)} .tag.warn{color:var(--warn)}
+.muted{color:var(--muted)} .empty{padding:18px;text-align:center;color:var(--muted)}
+#toast{position:fixed;inset-inline:16px;bottom:16px;max-width:420px;margin-inline:auto;padding:12px 16px;border-radius:12px;background:#111827;color:#fff;display:none;z-index:50;text-align:center}
+.hidden{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal.show{display:flex}
+.modal .box{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="/">→ الرجوع للنظام</a>
+  <h1>الوردية والأدوات</h1>
+  <span id="who" class="muted"></span>
+</header>
+<nav class="tabs" id="tabs"></nav>
+<main id="main"></main>
+<div id="toast" role="status"></div>
+<div class="modal" id="modal"><div class="box" id="modal-box"></div></div>
+
+<script>
+(function () {
+  'use strict';
+  const TOKEN = localStorage.getItem('manara_token');
+  let USER = null;
+  try { USER = JSON.parse(localStorage.getItem('manara_user') || 'null'); } catch (e) {}
+  if (!TOKEN || !USER) { location.href = '/'; return; }
+
+  const ROLE = USER.role;
+  const isAdmin = ROLE === 'tenant_admin' || ROLE === 'owner';
+  const isMgr = isAdmin || ROLE === 'branch_manager' || ROLE === 'accountant';
+
+  const esc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const money = v => (parseFloat(v) || 0).toFixed(2);
+  const dt = v => v ? new Date(v).toLocaleString('ar-LY', { timeZone: 'Africa/Tripoli', dateStyle: 'short', timeStyle: 'short' }) : '-';
+  const $ = id => document.getElementById(id);
+
+  document.getElementById('who').textContent = USER.name || '';
+
+  let toastT;
+  function toast(msg, bad) {
+    const t = $('toast'); t.textContent = msg; t.style.background = bad ? '#991b1b' : '#111827';
+    t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', 3500);
+  }
+
+  async function api(path, opts = {}) {
+    try {
+      const res = await fetch('/api' + path, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN, ...(opts.headers || {}) }
+      });
+      if (opts.raw) return res;
+      const data = await res.json().catch(() => ({ ok: false, error: 'استجابة غير صالحة' }));
+      if (res.status === 401) {
+        localStorage.removeItem('manara_token'); localStorage.removeItem('manara_user');
+        location.href = '/'; return data;
+      }
+      if (res.status === 403 && data.code === 'SUBSCRIPTION_EXPIRED') { toast(data.error, true); }
+      return data;
+    } catch (e) { return { ok: false, error: 'خطأ في الاتصال بالخادم' }; }
+  }
+
+  function openModal(html) { $('modal-box').innerHTML = html; $('modal').classList.add('show'); }
+  function closeModal() { $('modal').classList.remove('show'); }
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+  window.__closeModal = closeModal;
+
+  const TABS = [
+    { id: 'shift',   label: '🕒 الوردية',        show: true },
+    { id: 'debts',   label: '💰 الديون',         show: true },
+    { id: 'invoices',label: '📲 مشاركة فاتورة',  show: true },
+    { id: 'alerts',  label: '🔔 التنبيهات',      show: true },
+    { id: 'export',  label: '📤 التصدير',        show: isMgr },
+    { id: 'settings',label: '⚙️ الإعدادات',     show: isAdmin },
+    { id: 'account', label: '👤 حسابي والاشتراك', show: true }
+  ].filter(t => t.show);
+
+  let current = (location.hash || '#shift').slice(1);
+  if (!TABS.some(t => t.id === current)) current = 'shift';
+
+  function renderTabs() {
+    $('tabs').innerHTML = TABS.map(t => `<button data-t="${t.id}" class="${t.id === current ? 'on' : ''}">${t.label}</button>`).join('');
+    $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { current = b.dataset.t; location.hash = current; renderTabs(); load(); });
+  }
+
+  const VIEWS = {};
+  function load() { $('main').innerHTML = '<div class="empty">جارٍ التحميل…</div>'; VIEWS[current](); }
+
+  /* ============ الوردية ============ */
+  VIEWS.shift = async function () {
+    const r = await api('/shifts/current');
+    const hist = await api('/shifts?limit=15');
+    let html = '';
+    if (r.ok && r.data) {
+      const s = r.data, L = s.live;
+      html += `<div class="card"><h2>الوردية المفتوحة <span class="tag ok">مفتوحة</span></h2>
+        <p class="muted">بدأت: ${dt(s.opened_at)} — رصيد افتتاحي: ${money(s.opening_cash)}</p>
+        <div class="kpis">
+          <div class="kpi"><b>${money(L.total_sales)}</b><span>إجمالي المبيعات (${L.invoices_count} فاتورة)</span></div>
+          <div class="kpi"><b>${money(L.cash_net)}</b><span>صافي حركة النقد</span></div>
+          <div class="kpi"><b>${money(L.expected_cash)}</b><span>المتوقع في الدرج</span></div>
+        </div>
+        ${(L.sales_by_payment || []).length ? `<div class="table-wrap"><table><tr><th>طريقة الدفع</th><th>فواتير</th><th>الإجمالي</th><th>المدفوع</th><th>آجل</th></tr>
+          ${L.sales_by_payment.map(p => `<tr><td>${esc(p.payment_type)}</td><td>${p.invoices}</td><td>${money(p.total)}</td><td>${money(p.paid)}</td><td>${money(p.credit)}</td></tr>`).join('')}</table></div>` : ''}
+        <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+        <div class="row">
+          <div class="field"><label>النقد المعدود فعلياً في الدرج</label><input id="counted" type="number" step="0.01" min="0" inputmode="decimal"></div>
+          <div class="field"><label>ملاحظات</label><input id="shift-notes" maxlength="200"></div>
+          <button class="btn bad" id="btn-close-shift">إغلاق الوردية</button>
+        </div></div>`;
+    } else {
+      html += `<div class="card"><h2>لا توجد وردية مفتوحة</h2>
+        <div class="row">
+          <div class="field"><label>النقد الافتتاحي في الدرج</label><input id="opening" type="number" step="0.01" min="0" value="0" inputmode="decimal"></div>
+          <button class="btn" id="btn-open-shift">فتح وردية</button>
+        </div></div>`;
+    }
+    html += `<div class="card"><h2>آخر الورديات</h2>` + ((hist.ok && hist.data.length)
+      ? `<div class="table-wrap"><table><tr><th>المستخدم</th><th>الفتح</th><th>الإغلاق</th><th>المتوقع</th><th>المعدود</th><th>الفرق</th></tr>
+        ${hist.data.map(s => { const d = parseFloat(s.difference);
+          return `<tr><td>${esc(s.user_name)}</td><td>${dt(s.opened_at)}</td><td>${s.closed_at ? dt(s.closed_at) : '<span class="tag ok">مفتوحة</span>'}</td>
+          <td>${s.expected_cash == null ? '-' : money(s.expected_cash)}</td><td>${s.counted_cash == null ? '-' : money(s.counted_cash)}</td>
+          <td>${s.difference == null ? '-' : `<span class="tag ${Math.abs(d) < 0.01 ? 'ok' : d < 0 ? 'bad' : 'warn'}">${d > 0 ? '+' : ''}${money(d)}</span>`}</td></tr>`; }).join('')}</table></div>`
+      : '<div class="empty">لا توجد ورديات بعد</div>') + '</div>';
+    $('main').innerHTML = html;
+
+    const ob = $('btn-open-shift');
+    if (ob) ob.onclick = async () => {
+      ob.disabled = true;
+      const x = await api('/shifts/open', { method: 'POST', body: JSON.stringify({ opening_cash: $('opening').value || 0 }) });
+      if (x.ok) { toast('تم فتح الوردية'); load(); } else { toast(x.error || 'فشل', true); ob.disabled = false; }
+    };
+    const cb = $('btn-close-shift');
+    if (cb) cb.onclick = async () => {
+      const v = $('counted').value;
+      if (v === '') return toast('أدخل النقد المعدود', true);
+      if (!confirm('إغلاق الوردية؟ لا يمكن التراجع.')) return;
+      cb.disabled = true;
+      const x = await api('/shifts/close', { method: 'POST', body: JSON.stringify({ counted_cash: v, notes: $('shift-notes').value }) });
+      if (x.ok) {
+        const d = parseFloat(x.data.difference);
+        toast(Math.abs(d) < 0.01 ? 'أُغلقت الوردية — الدرج مطابق ✔' : `أُغلقت الوردية — الفرق ${d > 0 ? '+' : ''}${money(d)}`, Math.abs(d) >= 0.01);
+        load();
+      } else { toast(x.error || 'فشل', true); cb.disabled = false; }
+    };
+  };
+
+  /* ============ الديون ============ */
+  VIEWS.debts = async function () {
+    const r = await api('/customers?has_debt=true');
+    const list = r.ok ? r.data : [];
+    const total = list.reduce((a, c) => a + parseFloat(c.balance), 0);
+    $('main').innerHTML = `<div class="card"><h2>ديون العملاء</h2>
+      <div class="kpis"><div class="kpi"><b>${money(total)}</b><span>إجمالي الديون (${list.length} عميل)</span></div></div>` +
+      (list.length ? `<div class="table-wrap"><table><tr><th>العميل</th><th>الهاتف</th><th>الدين</th><th></th></tr>
+        ${list.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.phone || '-')}</td><td><b>${money(c.balance)}</b></td>
+          <td style="white-space:nowrap"><button class="btn" data-pay="${esc(c.id)}">تحصيل</button>
+          <button class="btn sec" data-st="${esc(c.id)}">كشف</button></td></tr>`).join('')}</table></div>` : '<div class="empty">لا توجد ديون 🎉</div>') + '</div>';
+    const byId = Object.fromEntries(list.map(c => [c.id, c]));
+    $('main').querySelectorAll('[data-pay]').forEach(b => b.onclick = () => payModal(byId[b.dataset.pay]));
+    $('main').querySelectorAll('[data-st]').forEach(b => b.onclick = () => statementModal(byId[b.dataset.st]));
+  };
+
+  function payModal(c) {
+    openModal(`<h2 style="margin-top:0">تحصيل من ${esc(c.name)}</h2>
+      <p class="muted">الدين الحالي: <b>${money(c.balance)}</b></p>
+      <div class="field" style="margin-bottom:10px"><label>المبلغ</label><input id="pay-amount" type="number" step="0.01" min="0.01" max="${esc(c.balance)}" value="${esc(c.balance)}" inputmode="decimal"></div>
+      <div class="field" style="margin-bottom:10px"><label>طريقة الدفع</label><select id="pay-method"><option value="cash">نقداً</option><option value="card">بطاقة</option><option value="transfer">حوالة</option></select></div>
+      <div class="field" style="margin-bottom:14px"><label>ملاحظة</label><input id="pay-notes" maxlength="200"></div>
+      <div class="row"><button class="btn" id="pay-go">تأكيد التحصيل</button><button class="btn sec" onclick="__closeModal()">إلغاء</button></div>`);
+    $('pay-go').onclick = async () => {
+      $('pay-go').disabled = true;
+      const x = await api(`/customers/${c.id}/payments`, { method: 'POST', body: JSON.stringify({ amount: $('pay-amount').value, method: $('pay-method').value, notes: $('pay-notes').value }) });
+      if (x.ok) { closeModal(); toast('تم التحصيل. الرصيد المتبقي: ' + money(x.data.balance_after)); load(); }
+      else { toast(x.error || 'فشل', true); $('pay-go').disabled = false; }
+    };
+  }
+
+  async function statementModal(c) {
+    const r = await api(`/customers/${c.id}/statement`);
+    const KIND = { invoice: 'فاتورة', payment: 'دفعة', return: 'مرتجع' };
+    openModal(`<h2 style="margin-top:0">كشف حساب ${esc(c.name)}</h2>` + (r.ok
+      ? `<div class="table-wrap"><table><tr><th>التاريخ</th><th>البيان</th><th>عليه</th><th>له</th><th>الرصيد</th></tr>
+         ${r.data.lines.map(l => `<tr><td>${dt(l.date)}</td><td>${KIND[l.kind] || ''} ${esc(l.ref)}</td><td>${l.debit ? money(l.debit) : ''}</td><td>${l.credit ? money(l.credit) : ''}</td><td>${money(l.running)}</td></tr>`).join('')}</table></div>
+         <p><b>الرصيد الحالي: ${money(r.data.customer.balance)}</b></p>` : `<p>${esc(r.error)}</p>`) +
+      `<button class="btn sec" onclick="__closeModal()">إغلاق</button>`);
+  }
+
+  /* ============ مشاركة فاتورة واتساب ============ */
+  VIEWS.invoices = async function () {
+    const r = await api('/sales?limit=30&status=completed');
+    $('main').innerHTML = `<div class="card"><h2>آخر الفواتير — إرسال عبر واتساب</h2>` + (r.ok && r.data.length
+      ? `<div class="table-wrap"><table><tr><th>رقم</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th></th></tr>
+        ${r.data.map(i => `<tr><td>${esc(i.invoice_number)}</td><td>${dt(i.created_at)}</td><td>${esc(i.customer_name || '-')}</td><td>${money(i.total)}</td>
+        <td><button class="btn" data-wa="${esc(i.id)}">📲 واتساب</button></td></tr>`).join('')}</table></div>` : '<div class="empty">لا توجد فواتير</div>') + '</div>';
+    $('main').querySelectorAll('[data-wa]').forEach(b => b.onclick = async () => {
+      const x = await api(`/sales/${b.dataset.wa}/share`);
+      if (!x.ok) return toast(x.error || 'فشل', true);
+      if (!x.data.phone) {
+        const ph = prompt('رقم هاتف العميل (مثال 0912345678):');
+        if (!ph) return;
+        const y = await api(`/sales/${b.dataset.wa}/share?phone=${encodeURIComponent(ph)}`);
+        if (y.ok) window.open(y.data.whatsapp_url, '_blank', 'noopener');
+        else toast(y.error || 'فشل', true);
+      } else window.open(x.data.whatsapp_url, '_blank', 'noopener');
+    });
+  };
+
+  /* ============ التنبيهات ============ */
+  VIEWS.alerts = async function () {
+    const r = await api('/alerts');
+    if (!r.ok) { $('main').innerHTML = `<div class="card">${esc(r.error)}</div>`; return; }
+    const d = r.data;
+    const sec = (title, tag, rows, head, row) => `<div class="card"><h2>${title} <span class="tag ${rows.length ? tag : 'ok'}">${rows.length}</span></h2>` +
+      (rows.length ? `<div class="table-wrap"><table><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${rows.map(row).join('')}</table></div>` : '<div class="empty">لا شيء 👌</div>') + '</div>';
+    $('main').innerHTML =
+      sec('مخزون منخفض', 'warn', d.low_stock, ['المنتج', 'المتوفر', 'الحد الأدنى'], p => `<tr><td>${esc(p.name)}</td><td>${esc(parseFloat(p.stock))}</td><td>${esc(parseFloat(p.min_stock))}</td></tr>`) +
+      sec('قرب انتهاء الصلاحية (30 يوماً)', 'bad', d.expiring, ['المنتج', 'الكمية', 'الصلاحية', 'متبقٍ'], p => `<tr><td>${esc(p.name)}</td><td>${esc(parseFloat(p.stock))}</td><td>${esc(String(p.expiry_date).slice(0, 10))}</td><td>${p.days_left < 0 ? '<span class="tag bad">منتهي</span>' : esc(p.days_left) + ' يوم'}</td></tr>`) +
+      sec('ديون متأخرة (أكثر من 30 يوماً)', 'bad', d.overdue_debts, ['العميل', 'الهاتف', 'الدين'], c => `<tr><td>${esc(c.name)}</td><td>${esc(c.phone || '-')}</td><td>${money(c.balance)}</td></tr>`) +
+      (d.stale_shifts.length ? sec('ورديات مفتوحة منذ أكثر من 16 ساعة', 'warn', d.stale_shifts, ['المستخدم', 'منذ'], s => `<tr><td>${esc(s.user_name)}</td><td>${dt(s.opened_at)}</td></tr>`) : '');
+  };
+
+  /* ============ التصدير ============ */
+  VIEWS.export = function () {
+    const today = new Date().toISOString().slice(0, 10), first = today.slice(0, 8) + '01';
+    const items = [['sales', 'المبيعات', true], ['expenses', 'المصروفات', true], ['products', 'المنتجات', false], ['inventory', 'تقييم المخزون', false], ['customers', 'العملاء والديون', false]];
+    $('main').innerHTML = `<div class="card"><h2>تصدير إلى Excel (CSV)</h2>
+      <div class="row" style="margin-bottom:14px"><div class="field"><label>من تاريخ</label><input type="date" id="ex-from" value="${first}"></div>
+      <div class="field"><label>إلى تاريخ</label><input type="date" id="ex-to" value="${today}"></div></div>
+      <div class="row">${items.map(i => `<button class="btn sec" data-ex="${i[0]}" data-d="${i[2]}">⬇️ ${i[1]}</button>`).join('')}</div>
+      <p class="muted" style="font-size:13px">الملفات بترميز UTF-8 وتفتح مباشرة في Excel بالعربية. التاريخ يخص المبيعات والمصروفات فقط.</p></div>`;
+    $('main').querySelectorAll('[data-ex]').forEach(b => b.onclick = async () => {
+      const q = b.dataset.d === 'true' ? `?from=${$('ex-from').value}&to=${$('ex-to').value}` : '';
+      b.disabled = true;
+      const res = await api(`/export/${b.dataset.ex}${q}`, { raw: true });
+      b.disabled = false;
+      if (!res.ok) { const j = await res.json().catch(() => ({})); return toast(j.error || 'فشل التصدير', true); }
+      const blob = await res.blob();
+      await window.saveBlob(blob, `${b.dataset.ex}-${new Date().toISOString().slice(0, 10)}.csv`);
+    });
+  };
+
+  /* ============ الإعدادات ============ */
+  VIEWS.settings = async function () {
+    const r = await api('/settings');
+    if (!r.ok) { $('main').innerHTML = `<div class="card">${esc(r.error)}</div>`; return; }
+    const s = r.data;
+    $('main').innerHTML = `<div class="card"><h2>⭐ نقاط الولاء</h2>
+      <div class="row">
+        <div class="field"><label>التفعيل</label><select id="s-loy"><option value="true" ${s.loyalty_enabled === 'true' ? 'selected' : ''}>مفعّل</option><option value="false" ${s.loyalty_enabled !== 'true' ? 'selected' : ''}>معطّل</option></select></div>
+        <div class="field"><label>كل كم دينار = نقطة؟</label><input id="s-spend" type="number" step="0.01" min="0.01" value="${esc(s.loyalty_spend_per_point)}"></div>
+        <div class="field"><label>قيمة النقطة عند الاستبدال</label><input id="s-redeem" type="number" step="0.001" min="0.001" value="${esc(s.loyalty_redeem_value)}"></div>
+      </div></div>
+      <div class="card"><h2>🛡️ ضوابط الكاشير</h2>
+      <div class="row">
+        <div class="field"><label>أقصى خصم للكاشير (%)</label><input id="s-disc" type="number" step="1" min="0" max="100" value="${esc(s.cashier_max_discount_percent)}"></div>
+        <div class="field"><label>إلزام الكاشير بفتح وردية قبل البيع</label><select id="s-shift"><option value="false" ${s.require_shift !== 'true' ? 'selected' : ''}>لا</option><option value="true" ${s.require_shift === 'true' ? 'selected' : ''}>نعم</option></select></div>
+      </div>
+      <p class="muted" style="font-size:13px">الكاشير لا يستطيع البيع بسعر أقل من (سعر الجملة أو البيع − هذه النسبة)، ولا منح خصم أعلى منها.</p></div>
+      <div class="card"><h2>🧾 تذييل الفاتورة</h2><div class="field"><label>النص</label><input id="s-foot" maxlength="200" value="${esc(s.print_footer)}"></div></div>
+      <button class="btn" id="s-save">حفظ الإعدادات</button>`;
+    $('s-save').onclick = async () => {
+      const x = await api('/settings', { method: 'PUT', body: JSON.stringify({
+        loyalty_enabled: $('s-loy').value, loyalty_spend_per_point: $('s-spend').value, loyalty_redeem_value: $('s-redeem').value,
+        cashier_max_discount_percent: $('s-disc').value, require_shift: $('s-shift').value, print_footer: $('s-foot').value }) });
+      toast(x.ok ? 'تم الحفظ ✔' : (x.error || 'فشل'), !x.ok);
+    };
+  };
+
+  /* ============ الحساب والاشتراك ============ */
+  VIEWS.account = async function () {
+    const sub = await api('/subscriptions/status');
+    const left = sub.endDate ? Math.ceil((new Date(sub.endDate) - Date.now()) / 864e5) : null;
+    $('main').innerHTML = `<div class="card"><h2>الاشتراك</h2>
+      <div class="kpis">
+        <div class="kpi"><b>${sub.active ? '<span style="color:var(--ok)">فعّال</span>' : '<span style="color:var(--bad)">منتهٍ</span>'}</b><span>الحالة</span></div>
+        <div class="kpi"><b>${left == null ? '-' : esc(left)}</b><span>أيام متبقية</span></div>
+        <div class="kpi"><b style="font-size:14px">${sub.endDate ? dt(sub.endDate) : '-'}</b><span>ينتهي في</span></div>
+      </div>` + (ROLE === 'tenant_admin' ? `
+      <div class="row"><div class="field"><label>كود تفعيل / تجديد</label><input id="lic" placeholder="MNR-MONTH-XXXX-XXXX-XXXX-XXXX" style="direction:ltr;text-transform:uppercase"></div>
+      <button class="btn" id="lic-go">تفعيل</button></div>` : '<p class="muted">تجديد الاشتراك من مدير المتجر.</p>') + `</div>
+      <div class="card"><h2>🔑 تغيير كلمة المرور</h2>
+      <div class="row">
+        <div class="field"><label>الحالية</label><input id="pw-old" type="password" autocomplete="current-password"></div>
+        <div class="field"><label>الجديدة (8 أحرف فأكثر)</label><input id="pw-new" type="password" autocomplete="new-password"></div>
+        <button class="btn" id="pw-go">تغيير</button>
+      </div></div>`;
+    const lg = $('lic-go');
+    if (lg) lg.onclick = async () => {
+      lg.disabled = true;
+      const x = await api('/subscriptions/activate-code', { method: 'POST', body: JSON.stringify({ code: $('lic').value }) });
+      if (x.ok) { toast('تم التفعيل: ' + (x.plan_name || '')); load(); } else { toast(x.error || 'فشل', true); lg.disabled = false; }
+    };
+    $('pw-go').onclick = async () => {
+      const x = await api('/auth/change-password', { method: 'POST', body: JSON.stringify({ current_password: $('pw-old').value, new_password: $('pw-new').value }) });
+      if (x.ok) { localStorage.setItem('manara_token', x.token); toast('تم تغيير كلمة المرور. سيُعاد تحميل الصفحة…'); setTimeout(() => location.reload(), 1200); }
+      else toast(x.error || 'فشل', true);
+    };
+  };
+
+  renderTabs(); load();
+})();
+</script>
+</body>
+</html>

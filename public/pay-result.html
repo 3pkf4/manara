@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المنارة — نتيجة الدفع</title><link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a1c38;font-family:"Noto Sans Arabic",Tahoma,sans-serif;color:#14213a}
+.c{background:#fff;border-radius:18px;padding:32px;width:90%;max-width:400px;text-align:center}h2{margin:0 0 8px}p{color:#5d6b86;line-height:1.8}
+a{display:inline-block;margin-top:14px;padding:12px 22px;background:#12315c;color:#fff;border-radius:10px;text-decoration:none;font-weight:700}</style></head>
+<body><div class="c"><h2 id="t">جارٍ التحقق من الدفع…</h2><p id="m">لا تغلق الصفحة.</p><a href="/" id="go" style="display:none">العودة للنظام</a></div>
+<script>
+// هذه الصفحة للعرض فقط: التفعيل يتم في الخادم بعد إشعار MyPay الموقَّع.
+(function () {
+  var q = new URLSearchParams(location.search), token = q.get('token') || '', cancelled = q.get('type') === 'cancel';
+  var t = document.getElementById('t'), m = document.getElementById('m'), go = document.getElementById('go');
+  function done(title, msg) { t.textContent = title; m.textContent = msg; go.style.display = 'inline-block'; }
+  if (cancelled) return done('أُلغيت عملية الدفع', 'لم يُخصم أي مبلغ. يمكنك المحاولة مجدداً من النظام.');
+  if (!token) return done('لا توجد عملية', 'افتح هذه الصفحة من رابط العودة بعد الدفع.');
+  var tries = 0;
+  (function poll() {
+    fetch('/api/payments/public-status?token=' + encodeURIComponent(token))
+      .then(function (r) { return r.json(); }).then(function (j) {
+        var o = j && j.order;
+        if (o && o.status === 'paid') return done('تم الدفع وتجديد الاشتراك ✅', 'ينتهي اشتراكك في ' + new Date(j.subscription_end).toLocaleDateString('ar-LY') + '.');
+        if (o && o.status === 'failed') return done('لم تكتمل العملية', 'لم يُخصم مبلغ، أو فشلت. أعد المحاولة.');
+        if (o && o.status === 'mismatch') return done('تحتاج العملية مراجعة', 'تواصل مع الدعم ومعك رقم الطلب: ' + o.id);
+        if (++tries < 20) setTimeout(poll, 3000);
+        else done('ما زلنا ننتظر تأكيد البوابة', 'إن خُصم المبلغ فسيتجدد اشتراكك تلقائياً خلال دقائق. أعد فتح النظام لاحقاً.');
+      }).catch(function () { if (++tries < 20) setTimeout(poll, 3000); else done('تعذر الاتصال', 'تحقق من الإنترنت ثم أعد فتح النظام.'); });
+  })();
+})();
+</script></body></html>
