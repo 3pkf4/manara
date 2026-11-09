@@ -15,7 +15,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$DATABASE_URL" && test ${#BACKUP_PASSPHRASE} -ge 16
-          docker run --rm -e DATABASE_URL postgres:17-alpine sh -c 'pg_dump "$DATABASE_URL" --no-owner --no-acl' \
+          docker run --rm -e DATABASE_URL postgres:18-alpine sh -c 'pg_dump "$DATABASE_URL" --no-owner --no-acl' \
             | gzip | openssl enc -aes-256-cbc -pbkdf2 -salt -pass env:BACKUP_PASSPHRASE > manara-$(date +%Y%m%d).sql.gz.enc
           test "$(stat -c%s manara-*.sql.gz.enc)" -gt 1000
           ls -la manara-*.sql.gz.enc
