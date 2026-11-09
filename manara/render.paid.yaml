@@ -1,0 +1,52 @@
+# النسخة المدفوعة (خدمة Starter + قاعدة Render مدارة). لاستعمالها أعد تسميتها إلى render.yaml.
+# المتغيرات sync:false تُدخلها أنت في لوحة Render (لا تضعها هنا أبداً).
+services:
+  - type: web
+    name: manara
+    runtime: node
+    plan: starter            # الخطة المجانية تنام بعد 15 دقيقة: غير مناسبة لمنتج مدفوع
+    region: frankfurt        # الأقرب لليبيا من مناطق Render
+    buildCommand: npm install --omit=dev --no-audit --no-fund
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "1"
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: manara-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPS_API_KEY
+        generateValue: true
+      - key: OWNER_PASSWORD     # مؤقت: يُنشأ به حساب المالك ثم احذفه
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+      - key: PUBLIC_BASE_URL    # رابط موقعك https الكامل (يظهر بعد أول نشر)
+        sync: false
+      - key: MYPAY_BASE_URL
+        value: https://mypay.ly/pay/sandbox/api/v1   # بدّله للإنتاج بعد نجاح التجربة
+      - key: MYPAY_CLIENT_ID
+        sync: false
+      - key: MYPAY_CLIENT_SECRET
+        sync: false
+      - key: MYPAY_WEBHOOK_SECRET
+        sync: false
+
+databases:
+  - name: manara-db
+    plan: basic-256mb        # مدفوعة: فيها نسخ احتياطي مستمر (الخطة المجانية تُحذف بعد 30 يوماً)
+    region: frankfurt
+    databaseName: manara
+    user: manara
+    postgresMajorVersion: "16"
+    ipAllowList: []          # وصول داخلي فقط (أأمن)

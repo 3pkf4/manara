@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<title>المنارة - الإعداد الأولي</title>
+<style>
+:root{--g950:#0a1c38;--g900:#171717;--g800:#262626;--g700:#404040;
+--g600:#525252;--g500:#737373;--g400:#a3a3a3;--g300:#d4d4d4;
+--g200:#e5e5e5;--g100:#f5f5f5;--w:#fff;--danger:#dc2626;--dbg:#fee2e2;
+--success:#16a34a;--sbg:#dcfce7;--warn:#d97706;--wbg:#fef3c7;
+--info:#0284c7;--ibg:#e0f2fe;--r:8px;--rl:14px;--rx:20px;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,sans-serif;-webkit-font-smoothing:antialiased;}
+html,body{min-height:100vh;overflow-x:hidden;}
+body{background:var(--g950);color:var(--w);line-height:1.5;font-size:14px;}
+input,button,select{font-family:inherit;font-size:16px;}
+.bg{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.glow{position:fixed;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.c{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:30px 20px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;}
+.logo{width:80px;height:80px;background:var(--w);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--g900);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.hd{text-align:center;margin-bottom:32px;}
+.hd h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;}
+.hd .s{font-size:12px;color:var(--g500);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+.pr{display:flex;justify-content:space-between;margin-bottom:28px;position:relative;}
+.pr::before{content:'';position:absolute;top:18px;left:40px;right:40px;height:2px;background:var(--g800);z-index:0;}
+.pb{position:absolute;top:18px;height:2px;background:var(--w);z-index:0;transition:width .4s;left:40px;width:0;}
+.ps{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;}
+.pc{width:38px;height:38px;border-radius:50%;background:var(--g800);color:var(--g500);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid var(--g800);transition:all .2s;}
+.ps.active .pc{background:var(--w);color:var(--g900);border-color:var(--w);}
+.ps.completed .pc{background:var(--success);color:var(--w);border-color:var(--success);}
+.pl{font-size:10px;color:var(--g500);font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.ps.active .pl{color:var(--w);}
+.ps.completed .pl{color:var(--success);}
+.step{display:none;animation:si .4s;}
+.step.active{display:block;}
+@keyframes si{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.st{font-size:20px;font-weight:800;margin-bottom:8px;text-align:center;}
+.sd{font-size:13px;color:var(--g400);text-align:center;margin-bottom:24px;line-height:1.6;}
+.f{margin-bottom:14px;text-align:right;}
+.f label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:1px;}
+.f input,.f select{width:100%;padding:13px 15px;border:1px solid var(--g700);border-radius:var(--r);font-size:15px;background:var(--g900);color:var(--w);transition:all .2s;}
+.f input:focus,.f select:focus{outline:none;border-color:var(--w);background:#000;}
+.f input::placeholder{color:var(--g600);}
+.f .h{font-size:11px;color:var(--g500);margin-top:5px;line-height:1.5;}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.act{display:flex;gap:10px;margin-top:24px;}
+.btn{padding:14px 20px;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;transition:all .2s;border:none;font-family:inherit;flex:1;}
+.bp{background:var(--w);color:var(--g900);}
+.bp:hover:not(:disabled){background:var(--g200);transform:translateY(-1px);}
+.bp:disabled{opacity:.5;cursor:not-allowed;}
+.bs{background:var(--g800);color:var(--w);}
+.bs:hover{background:var(--g700);}
+.alert{padding:12px 14px;border-radius:var(--r);font-size:12px;line-height:1.6;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start;}
+.ad{background:var(--dbg);color:#991b1b;}
+.as{background:var(--sbg);color:#166534;}
+.ai{background:var(--ibg);color:#075985;}
+.aw{background:var(--wbg);color:#92400e;}
+.sum{background:var(--g900);border-radius:var(--rl);padding:18px;border:1px solid var(--g800);margin-bottom:18px;}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--g800);font-size:13px;}
+.sr:last-child{border-bottom:none;}
+.sl{color:var(--g500);font-weight:600;}
+.sv{color:var(--w);font-weight:700;text-align:left;direction:ltr;}
+.sp{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--w);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--g900);color:var(--w);padding:13px 20px;border-radius:var(--r);font-size:13px;font-weight:600;box-shadow:0 20px 40px rgba(0,0,0,.4);z-index:9999;opacity:0;transition:all .3s;max-width:calc(100% - 32px);text-align:center;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+#toast.s{background:var(--success);}
+#toast.e{background:var(--danger);}
+code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size:12px;direction:ltr;display:inline-block;}
+@media(max-width:560px){.c{padding:20px 14px;}.logo{width:64px;height:64px;}.hd h1{font-size:22px;}.st{font-size:18px;}.r2{grid-template-columns:1fr;}.pc{width:32px;height:32px;font-size:12px;}.pl{font-size:9px;}}
+</style>
+<link rel="stylesheet" href="/css/ui.css">
+<script src="/js/icons.js"></script>
+</head>
+<body>
+<div class="bg"></div>
+<div class="glow"></div>
+
+<div class="c">
+  <div class="hd">
+    <div class="logo" style="background:none;overflow:hidden"><img src="/icons/logo.svg" alt="المنارة" style="width:100%;height:100%"></div>
+    <h1>مرحباً بك في المنارة</h1>
+    <p class="s">إعداد المنظومة لأول مرة</p>
+  </div>
+
+  <div class="pr">
+    <div class="pb" id="pb"></div>
+    <div class="ps active" data-step="1"><div class="pc">1</div><div class="pl">الرمز</div></div>
+    <div class="ps" data-step="2"><div class="pc">2</div><div class="pl">المتجر</div></div>
+    <div class="ps" data-step="3"><div class="pc">3</div><div class="pl">المالك</div></div>
+    <div class="ps" data-step="4"><div class="pc">4</div><div class="pl">الفرع</div></div>
+    <div class="ps" data-step="5"><div class="pc">5</div><div class="pl">البدء</div></div>
+  </div>
+
+  <!-- الخطوة 1 -->
+  <div class="step active" id="s1">
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lock"/></svg> رمز الإعداد</h2>
+    <p class="sd">أدخل رمز الإعداد الذي حصلت عليه عند تثبيت النظام.</p>
+
+    <div class="alert ai">
+      <div>
+        <strong>كيف تجد الرمز؟</strong><br>
+        افتح الطرفية ونفّذ:<br>
+        <code>cat ~/manara-saas/setup_token.txt</code>
+      </div>
+    </div>
+
+    <div class="f">
+      <label>رمز الإعداد *</label>
+      <input type="text" id="token" placeholder="الصق الرمز هنا" autocomplete="off" autofocus>
+      <div class="h">64 حرفاً</div>
+    </div>
+
+    <div class="act">
+      <button class="bp" onclick="verifyToken()" id="b1">
+        التحقق والمتابعة
+        <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- الخطوة 2 -->
+  <div class="step" id="s2">
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> معلومات المتجر</h2>
+    <p class="sd">أدخل المعلومات الأساسية لمتجرك.</p>
+
+    <div class="f">
+      <label>اسم المتجر *</label>
+      <input type="text" id="business" placeholder="مثال: مكتبة النور" autocomplete="off">
+    </div>
+
+    <div class="r2">
+      <div class="f">
+        <label>اسم المالك *</label>
+        <input type="text" id="owner" placeholder="اسمك الكامل">
+      </div>
+      <div class="f">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="phone" placeholder="0910000000">
+      </div>
+    </div>
+
+    <div class="f">
+      <label>البريد الإلكتروني (اختياري)</label>
+      <input type="email" id="email" placeholder="email@example.com">
+    </div>
+
+    <div class="f">
+      <label>عنوان المتجر</label>
+      <input type="text" id="address" placeholder="المدينة - المنطقة">
+    </div>
+
+    <div class="f">
+      <label>العملة</label>
+      <select id="currency">
+        <option value="LYD" selected>دينار ليبي (د.ل)</option>
+        <option value="USD">دولار أمريكي ($)</option>
+        <option value="EUR">يورو (€)</option>
+        <option value="TND">دينار تونسي</option>
+        <option value="EGP">جنيه مصري</option>
+        <option value="SAR">ريال سعودي</option>
+        <option value="AED">درهم إماراتي</option>
+      </select>
+    </div>
+
+    <div class="act">
+      <button class="bs" onclick="go(1)">← السابق</button>
+      <button class="bp" onclick="go(3)">التالي →</button>
+    </div>
+  </div>
+
+  <!-- الخطوة 3 -->
+  <div class="step" id="s3">
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg> حساب المالك</h2>
+    <p class="sd">أنشئ حسابك الرئيسي للدخول إلى النظام.</p>
+
+    <div class="alert aw">
+      <div><strong>احتفظ بهذه البيانات في مكان آمن!</strong></div>
+    </div>
+
+    <div class="f">
+      <label>اسم المستخدم *</label>
+      <input type="text" id="username" value="admin" autocomplete="off">
+      <div class="h">بالإنجليزية والأرقام فقط</div>
+    </div>
+
+    <div class="f">
+      <label>كلمة المرور *</label>
+      <input type="password" id="password" placeholder="6 أحرف على الأقل" autocomplete="new-password">
+      <div class="h">6 أحرف على الأقل</div>
+    </div>
+
+    <div class="f">
+      <label>تأكيد كلمة المرور *</label>
+      <input type="password" id="password2" placeholder="أعد كتابتها" autocomplete="new-password">
+    </div>
+
+    <div class="act">
+      <button class="bs" onclick="go(2)">← السابق</button>
+      <button class="bp" onclick="go(4)">التالي →</button>
+    </div>
+  </div>
+
+  <!-- الخطوة 4 -->
+  <div class="step" id="s4">
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-building"/></svg> الفرع الأول</h2>
+    <p class="sd">أضف فرعك الأول (الرئيسي).</p>
+
+    <div class="f">
+      <label>اسم الفرع *</label>
+      <input type="text" id="branch" value="الفرع الرئيسي">
+    </div>
+
+    <div class="f">
+      <label>عنوان الفرع</label>
+      <input type="text" id="baddress" placeholder="اختياري">
+    </div>
+
+    <div class="f">
+      <label>هاتف الفرع</label>
+      <input type="tel" id="bphone" placeholder="اختياري">
+    </div>
+
+    <div class="act">
+      <button class="bs" onclick="go(3)">← السابق</button>
+      <button class="bp" onclick="go(5)">التالي →</button>
+    </div>
+  </div>
+
+  <!-- الخطوة 5 -->
+  <div class="step" id="s5">
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg> جاهز للبدء!</h2>
+    <p class="sd">راجع البيانات قبل إتمام الإعداد.</p>
+
+    <div class="sum">
+      <div class="sr"><span class="sl">اسم المتجر</span><span class="sv" id="s-business">---</span></div>
+      <div class="sr"><span class="sl">المالك</span><span class="sv" id="s-owner">---</span></div>
+      <div class="sr"><span class="sl">الهاتف</span><span class="sv" id="s-phone">---</span></div>
+      <div class="sr"><span class="sl">اسم المستخدم</span><span class="sv" id="s-username">---</span></div>
+      <div class="sr"><span class="sl">الفرع</span><span class="sv" id="s-branch">---</span></div>
+      <div class="sr"><span class="sl">العملة</span><span class="sv" id="s-currency">---</span></div>
+    </div>
+
+    <div class="alert as">
+      <div>بالضغط على "إتمام الإعداد"، سيتم إنشاء متجرك وحسابك.</div>
+    </div>
+
+    <div class="act">
+      <button class="bs" onclick="go(4)">← السابق</button>
+      <button class="bp" onclick="completeSetup()" id="b5">إتمام الإعداد</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const S = { token: null, step: 1, total: 5, api: window.location.origin + '/api' };
+
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(window._t);
+  window._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function go(n) {
+  if (n > S.step && !validate()) return;
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  document.querySelectorAll('.ps').forEach(ps => {
+    const num = parseInt(ps.dataset.step);
+    ps.classList.toggle('active', num === n);
+    ps.classList.toggle('completed', num < n);
+  });
+  document.getElementById('pb').style.width = ((n-1)/(S.total-1)*100) + '%';
+  S.step = n;
+  if (n === 5) fillSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validate() {
+  if (S.step === 1) return true;
+  if (S.step === 2) {
+    if (!document.getElementById('business').value.trim()) { toast('اسم المتجر مطلوب', 'e'); return false; }
+    if (!document.getElementById('owner').value.trim()) { toast('اسم المالك مطلوب', 'e'); return false; }
+    if (!document.getElementById('phone').value.trim()) { toast('رقم الهاتف مطلوب', 'e'); return false; }
+    return true;
+  }
+  if (S.step === 3) {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    const p2 = document.getElementById('password2').value;
+    if (!u) { toast('اسم المستخدم مطلوب', 'e'); return false; }
+    if (!/^[a-zA-Z0-9_]+$/.test(u)) { toast('اسم المستخدم بالإنجليزية والأرقام فقط', 'e'); return false; }
+    if (p.length < 6) { toast('كلمة المرور 6 أحرف على الأقل', 'e'); return false; }
+    if (p !== p2) { toast('كلمتا المرور غير متطابقتين', 'e'); return false; }
+    return true;
+  }
+  if (S.step === 4) {
+    if (!document.getElementById('branch').value.trim()) { toast('اسم الفرع مطلوب', 'e'); return false; }
+    return true;
+  }
+  return true;
+}
+
+async function verifyToken() {
+  const token = document.getElementById('token').value.trim();
+  if (!token) return toast('أدخل الرمز', 'e');
+  const b = document.getElementById('b1');
+  b.disabled = true;
+  b.innerHTML = '<span class="sp"></span> جارٍ التحقق...';
+  try {
+    const r = await fetch(S.api + '/setup/verify-token', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ token })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      S.token = token;
+      toast(' الرمز صحيح', 's');
+      setTimeout(() => go(2), 500);
+    } else {
+      toast(d.error || 'الرمز غير صحيح', 'e');
+    }
+  } catch(e) {
+    toast('خطأ في الاتصال', 'e');
+  } finally {
+    b.disabled = false;
+    b.innerHTML = 'التحقق والمتابعة';
+  }
+}
+
+function fillSummary() {
+  const cur = {
+    LYD: 'دينار ليبي (د.ل)', USD: 'دولار', EUR: 'يورو', TND: 'دينار تونسي',
+    EGP: 'جنيه مصري', SAR: 'ريال سعودي', AED: 'درهم إماراتي'
+  };
+  document.getElementById('s-business').textContent = document.getElementById('business').value || '-';
+  document.getElementById('s-owner').textContent = document.getElementById('owner').value || '-';
+  document.getElementById('s-phone').textContent = document.getElementById('phone').value || '-';
+  document.getElementById('s-username').textContent = document.getElementById('username').value || '-';
+  document.getElementById('s-branch').textContent = document.getElementById('branch').value || '-';
+  const c = document.getElementById('currency').value;
+  document.getElementById('s-currency').textContent = cur[c] || c;
+}
+
+async function completeSetup() {
+  const b = document.getElementById('b5');
+  b.disabled = true;
+  b.innerHTML = '<span class="sp"></span> جارٍ الإعداد...';
+  const payload = {
+    token: S.token,
+    business_name: document.getElementById('business').value.trim(),
+    owner_name: document.getElementById('owner').value.trim(),
+    owner_phone: document.getElementById('phone').value.trim(),
+    owner_email: document.getElementById('email').value.trim() || null,
+    address: document.getElementById('address').value.trim() || null,
+    currency: document.getElementById('currency').value,
+    admin_username: document.getElementById('username').value.trim(),
+    admin_password: document.getElementById('password').value,
+    branch_name: document.getElementById('branch').value.trim(),
+    branch_address: document.getElementById('baddress').value.trim() || null,
+    branch_phone: document.getElementById('bphone').value.trim() || null
+  };
+  try {
+    const r = await fetch(S.api + '/setup/init', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (d.ok) {
+      localStorage.setItem('manara_token', d.token);
+      localStorage.setItem('manara_user', JSON.stringify(d.user));
+      toast(' تم الإعداد بنجاح!', 's');
+      setTimeout(() => window.location.href = '/', 1200);
+    } else {
+      toast(d.error || 'فشل الإعداد', 'e');
+      b.disabled = false;
+      b.innerHTML = 'إتمام الإعداد';
+    }
+  } catch(e) {
+    toast('خطأ في الاتصال', 'e');
+    b.disabled = false;
+    b.innerHTML = 'إتمام الإعداد';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (S.step === 1) { e.preventDefault(); verifyToken(); }
+    else if (S.step < 5) { e.preventDefault(); go(S.step + 1); }
+  }
+});
+
+(async function init() {
+  try {
+    const r = await fetch(S.api + '/setup/status');
+    const d = await r.json();
+    if (d.completed) window.location.href = '/';
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

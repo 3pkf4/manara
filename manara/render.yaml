@@ -1,0 +1,42 @@
+# النسخة المجانية: خدمة ويب مجانية على Render + قاعدة Neon المجانية (تُنشئها أنت وتلصق رابطها).
+# New → Blueprint → اختر المستودع. المتغيرات sync:false تُدخلها في لوحة Render (لا تضعها هنا أبداً).
+# تنبيه: الخطة المجانية تنام بعد 15 دقيقة خمول. راجع DEPLOY-FREE-AR.md لتخفيف ذلك وحدودها.
+services:
+  - type: web
+    name: manara
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install --omit=dev --no-audit --no-fund
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "1"
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: DATABASE_URL      # رابط Neon (ينتهي بـ ?sslmode=require)
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPS_API_KEY
+        generateValue: true
+      - key: OWNER_PASSWORD     # مؤقت: يُنشأ به حساب المالك ثم احذفه
+        sync: false
+      - key: OWNER_EMAIL
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: MYPAY_BASE_URL
+        value: https://mypay.ly/pay/sandbox/api/v1
+      - key: MYPAY_CLIENT_ID
+        sync: false
+      - key: MYPAY_CLIENT_SECRET
+        sync: false
+      - key: MYPAY_WEBHOOK_SECRET
+        sync: false

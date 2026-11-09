@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<title>المنارة - لوحة المالك</title>
+<style>
+:root {
+  --gray-950:#0a1c38; --gray-900:#171717; --gray-800:#262626;
+  --gray-700:#404040; --gray-600:#525252; --gray-500:#737373;
+  --gray-400:#a3a3a3; --gray-300:#d4d4d4; --gray-200:#e5e5e5;
+  --gray-100:#f5f5f5; --gray-50:#fafafa; --white:#ffffff;
+  --bg:#fafafa; --surface:#ffffff; --text:#171717;
+  --text-secondary:#737373; --border:#e5e5e5;
+  --danger:#dc2626; --danger-bg:#fee2e2;
+  --success:#16a34a; --success-bg:#dcfce7;
+  --warn:#d97706; --warn-bg:#fef3c7;
+  --info:#0284c7; --info-bg:#e0f2fe;
+  --shadow:0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --shadow-xl:0 20px 40px rgba(0,0,0,0.15);
+  --radius-sm:4px; --radius:8px; --radius-md:10px;
+  --radius-lg:14px; --radius-xl:18px; --radius-full:9999px;
+  --transition:200ms cubic-bezier(0.4,0,0.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  -webkit-font-smoothing:antialiased;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);line-height:1.5;
+     font-size:14px;}
+input,button,select,textarea{font-family:inherit;font-size:16px;}
+button{cursor:pointer;border:none;background:none;}
+
+.icon{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;
+      fill:none;stroke-linecap:round;stroke-linejoin:round;
+      flex-shrink:0;}
+.icon-sm{width:16px;height:16px;}
+.icon-lg{width:22px;height:22px;}
+.icon-xl{width:28px;height:28px;}
+
+/* Login */
+#login-view{position:fixed;inset:0;display:flex;
+  align-items:center;justify-content:center;
+  background:var(--gray-950);z-index:1000;padding:20px;}
+#login-view::before{content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;}
+.login-box{position:relative;background:var(--gray-900);
+  padding:40px 28px;border-radius:var(--radius-xl);
+  width:100%;max-width:400px;border:1px solid var(--gray-800);
+  text-align:center;z-index:1;}
+.login-box h1{color:#fff;font-size:22px;margin-bottom:6px;}
+.login-box p{color:var(--gray-500);font-size:11px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:28px;font-weight:600;}
+.input-group{margin-bottom:14px;text-align:right;}
+.input-group label{display:block;margin-bottom:6px;
+  font-size:11px;font-weight:700;color:var(--gray-400);
+  text-transform:uppercase;letter-spacing:1px;}
+.input-group input{width:100%;padding:12px 14px;
+  border:1px solid var(--gray-700);border-radius:var(--radius);
+  font-size:14px;background:var(--gray-950);color:#fff;}
+.input-group input:focus{outline:none;border-color:#fff;}
+.btn-login{width:100%;padding:13px;background:#fff;
+  color:var(--gray-900);border-radius:var(--radius);
+  font-size:14px;font-weight:700;margin-top:6px;}
+.btn-login:active{transform:scale(0.98);}
+
+/* Layout */
+#app-view{display:none;}
+.container{max-width:1400px;margin:0 auto;padding:20px;}
+header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--gray-800);}
+.top-brand{display:flex;align-items:center;gap:12px;}
+.top-logo{width:40px;height:40px;background:#fff;
+  border-radius:var(--radius);display:flex;align-items:center;
+  justify-content:center;color:var(--gray-900);}
+.top-title{font-size:15px;font-weight:700;}
+.top-subtitle{font-size:10px;color:var(--gray-500);
+  letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.top-actions{display:flex;gap:8px;align-items:center;}
+.top-btn{padding:8px 14px;background:var(--gray-800);color:#fff;
+  border-radius:var(--radius);font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+  transition:var(--transition);}
+.top-btn:hover{background:var(--gray-700);}
+.top-btn.danger:hover{background:var(--danger);}
+.top-user{display:flex;align-items:center;gap:8px;
+  padding:5px 12px 5px 5px;background:var(--gray-800);
+  border-radius:var(--radius-full);font-size:12px;font-weight:600;}
+.top-avatar{width:28px;height:28px;border-radius:var(--radius-full);
+  background:#fff;color:var(--gray-900);display:flex;
+  align-items:center;justify-content:center;font-size:11px;
+  font-weight:700;}
+
+/* Stats */
+.stats-grid{display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--surface);padding:18px;
+  border-radius:var(--radius-lg);border:1px solid var(--border);
+  position:relative;overflow:hidden;transition:var(--transition);}
+.stat-card::before{content:'';position:absolute;top:0;right:0;
+  width:4px;height:100%;background:var(--gray-900);}
+.stat-card.success::before{background:var(--success);}
+.stat-card.warn::before{background:var(--warn);}
+.stat-card.danger::before{background:var(--danger);}
+.stat-card.info::before{background:var(--info);}
+.stat-card:hover{transform:translateY(-2px);
+  box-shadow:var(--shadow-md);}
+.stat-label{font-size:11px;color:var(--text-secondary);
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:0.5px;margin-bottom:6px;display:block;}
+.stat-value{font-size:26px;font-weight:800;color:var(--text);
+  letter-spacing:-0.5px;}
+.stat-sub{font-size:11px;color:var(--text-secondary);
+  margin-top:4px;font-weight:600;}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);
+  margin-bottom:20px;overflow-x:auto;}
+.tab{padding:12px 20px;font-size:13px;font-weight:600;
+  color:var(--text-secondary);border-bottom:2px solid transparent;
+  margin-bottom:-2px;transition:var(--transition);
+  white-space:nowrap;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--text);border-bottom-color:var(--gray-900);}
+
+/* Tables */
+.data-card{background:var(--surface);
+  border-radius:var(--radius-lg);border:1px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;}
+.table-scroll{overflow-x:auto;}
+.data-table{width:100%;border-collapse:separate;
+  border-spacing:0;min-width:900px;}
+.data-table th{background:var(--gray-50);padding:12px 14px;
+  text-align:right;font-size:11px;font-weight:700;
+  color:var(--gray-600);text-transform:uppercase;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+  letter-spacing:0.3px;}
+.data-table td{padding:12px 14px;text-align:right;
+  font-size:13px;border-bottom:1px solid var(--border);
+  vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tbody tr:hover td{background:var(--gray-50);}
+.tag{display:inline-block;padding:3px 10px;
+  border-radius:var(--radius-full);font-size:10px;
+  font-weight:700;background:var(--gray-100);
+  color:var(--gray-700);white-space:nowrap;}
+.tag.success{background:var(--success-bg);color:var(--success);}
+.tag.danger{background:var(--danger-bg);color:var(--danger);}
+.tag.warn{background:var(--warn-bg);color:var(--warn);}
+.tag.info{background:var(--info-bg);color:var(--info);}
+
+.btn{padding:9px 14px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;display:inline-flex;
+  align-items:center;gap:6px;min-height:38px;
+  transition:var(--transition);border:1px solid transparent;}
+.btn-primary{background:var(--gray-900);color:#fff;}
+.btn-primary:hover{background:#000;}
+.btn-outline{background:var(--surface);color:var(--gray-700);
+  border-color:var(--border);}
+.btn-outline:hover{background:var(--gray-50);
+  border-color:var(--gray-900);}
+.btn-sm{padding:6px 10px;font-size:12px;min-height:32px;}
+.btn-icon{width:30px;height:30px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-sm);border:1px solid var(--border);
+  background:var(--surface);color:var(--gray-600);
+  transition:var(--transition);}
+.btn-icon:hover{background:var(--gray-900);color:#fff;
+  border-color:var(--gray-900);}
+.btn-icon.danger:hover{background:var(--danger);
+  border-color:var(--danger);}
+.btn-icon.success:hover{background:var(--success);
+  border-color:var(--success);}
+.btn-icon.warn:hover{background:var(--warn);
+  border-color:var(--warn);}
+
+.page-header{display:flex;justify-content:space-between;
+  align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.page-header h2{font-size:18px;font-weight:700;
+  display:flex;align-items:center;gap:8px;}
+.page-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.search-box{display:flex;gap:8px;flex:1;max-width:400px;}
+.search-box input{flex:1;padding:9px 14px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  font-size:13px;background:var(--surface);}
+.search-box input:focus{outline:none;
+  border-color:var(--gray-900);}
+
+.empty-state{padding:60px 20px;text-align:center;
+  color:var(--text-secondary);}
+.empty-state h4{font-size:14px;font-weight:700;
+  margin-bottom:4px;}
+.empty-state p{font-size:12px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  z-index:2000;display:none;align-items:center;
+  justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius-xl);
+  width:100%;max-width:560px;box-shadow:var(--shadow-xl);
+  max-height:90vh;display:flex;flex-direction:column;
+  animation:slideUp 0.3s cubic-bezier(0.16,1,0.3,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}}
+.modal.lg{max-width:760px;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;
+  align-items:center;flex-shrink:0;}
+.modal-header h3{font-size:16px;font-weight:700;}
+.modal-close{width:32px;height:32px;border-radius:var(--radius);
+  color:var(--gray-500);display:flex;align-items:center;
+  justify-content:center;transition:var(--transition);}
+.modal-close:hover{background:var(--gray-100);color:var(--gray-900);}
+.modal-body{padding:20px;overflow-y:auto;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);
+  display:flex;gap:8px;justify-content:flex-start;flex-shrink:0;}
+.modal-footer button{padding:10px 20px;
+  border-radius:var(--radius);font-size:13px;
+  font-weight:700;min-height:40px;}
+.btn-cancel{background:var(--gray-100);color:var(--gray-700);}
+.btn-cancel:hover{background:var(--gray-200);}
+.btn-confirm{background:var(--gray-900);color:#fff;}
+.btn-confirm:hover{background:#000;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;margin-bottom:12px;}
+.form-group{margin-bottom:12px;}
+.form-group label{display:block;margin-bottom:5px;
+  font-size:11px;font-weight:700;color:var(--text-secondary);
+  text-transform:uppercase;letter-spacing:0.5px;}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--border);
+  border-radius:var(--radius);font-size:13px;
+  background:var(--surface);transition:var(--transition);}
+.form-group input:focus,.form-group select:focus{
+  outline:none;border-color:var(--gray-900);
+  box-shadow:0 0 0 3px rgba(23,23,23,0.05);}
+
+/* Toast */
+#toast-container{position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%);z-index:9999;
+  display:flex;flex-direction:column;gap:8px;
+  align-items:center;pointer-events:none;max-width:90vw;}
+.toast{background:var(--gray-900);color:#fff;
+  padding:12px 20px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;box-shadow:var(--shadow-xl);
+  animation:toastIn 0.3s;pointer-events:auto;
+  min-width:220px;text-align:center;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+.toast.warn{background:var(--warn);}
+.toast.hide{animation:toastOut 0.3s forwards;}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{to{opacity:0;transform:translateY(20px);}}
+
+/* Activity Log */
+.activity-item{display:flex;gap:12px;padding:12px;
+  border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-icon{width:36px;height:36px;
+  border-radius:var(--radius);background:var(--gray-100);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gray-600);flex-shrink:0;}
+.activity-content{flex:1;min-width:0;}
+.activity-action{font-size:13px;font-weight:600;
+  color:var(--text);margin-bottom:2px;}
+.activity-meta{font-size:11px;color:var(--text-secondary);
+  display:flex;gap:12px;flex-wrap:wrap;}
+.activity-meta span{display:flex;align-items:center;gap:4px;}
+
+@media (max-width:768px) {
+  .container{padding:12px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .stat-value{font-size:20px;}
+  .form-row{grid-template-columns:1fr;}
+  .page-header{flex-direction:column;align-items:stretch;}
+  .search-box{max-width:none;}
+  .modal{max-width:100%;}
+  .top-user span{display:none;}
+  .top-btn span{display:none;}
+}
+</style>
+<link rel="stylesheet" href="/css/ui.css">
+<script src="/js/icons.js"></script>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-view">
+  <div class="login-box">
+    <h1><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-crown"/></svg> لوحة المالك</h1>
+    <p>Manara Admin Panel</p>
+    <form onsubmit="event.preventDefault(); adminLogin();">
+      <div class="input-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="admin-username" placeholder="owner" autofocus>
+      </div>
+      <div class="input-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="admin-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn-login" id="admin-login-btn">دخول</button>
+    </form>
+    <p id="admin-login-error" style="color:#f87171;margin-top:10px;
+       display:none;font-size:12px;"></p>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app-view">
+  <header class="top">
+    <div class="top-brand">
+      <div class="top-logo" style="background:none;overflow:hidden"><img src="/icons/logo.svg" alt="" style="width:100%;height:100%"></div>
+      <div>
+        <div class="top-title">لوحة المالك</div>
+        <div class="top-subtitle">Manara Admin</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="top-btn" onclick="loadAll()" title="تحديث">
+        <svg class="icon icon-sm" viewBox="0 0 24 24">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        <span>تحديث</span>
+      </button>
+      <button class="top-btn" onclick="window.location.href='/'" title="الواجهة">
+        <svg class="icon icon-sm" viewBox="0 0 24 24">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        <span>الواجهة</span>
+      </button>
+      <button class="top-btn danger" onclick="adminLogout()" title="خروج">
+        <svg class="icon icon-sm" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span>خروج</span>
+      </button>
+      <div class="top-user">
+        <div class="top-avatar" id="admin-avatar">--</div>
+        <span id="admin-name">---</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" data-tab="overview" onclick="switchTab('overview')">
+        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="9"/>
+          <rect x="14" y="3" width="7" height="5"/>
+          <rect x="14" y="12" width="7" height="9"/>
+          <rect x="3" y="16" width="7" height="5"/>
+        </svg>
+        نظرة عامة
+      </div>
+      <div class="tab" data-tab="tenants" onclick="switchTab('tenants')">
+        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        العملاء
+      </div>
+      <div class="tab" data-tab="activity" onclick="switchTab('activity')">
+        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        سجل النشاطات
+      </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="tab-overview">
+      <div class="stats-grid">
+        <div class="stat-card info">
+          <span class="stat-label">إجمالي العملاء</span>
+          <div class="stat-value" id="ov-total">0</div>
+          <div class="stat-sub" id="ov-active">0 نشط</div>
+        </div>
+        <div class="stat-card success">
+          <span class="stat-label">عملاء على المنظومة</span>
+          <div class="stat-value" id="ov-on-system">0</div>
+          <div class="stat-sub">مسجلون حالياً</div>
+        </div>
+        <div class="stat-card warn">
+          <span class="stat-label">قيد التجربة</span>
+          <div class="stat-value" id="ov-trials">0</div>
+          <div class="stat-sub">عرض مجاني</div>
+        </div>
+        <div class="stat-card danger">
+          <span class="stat-label">منتهي/موقوف</span>
+          <div class="stat-value" id="ov-expired">0</div>
+          <div class="stat-sub">يحتاج متابعة</div>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div style="padding:16px;border-bottom:1px solid var(--border);">
+          <h3 style="font-size:14px;font-weight:700;">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wallet"/></svg> إجمالي المبيعات عبر المنظومة
+          </h3>
+        </div>
+        <div class="stats-grid" style="margin:16px;">
+          <div class="stat-card success">
+            <span class="stat-label">إجمالي الإيرادات</span>
+            <div class="stat-value" id="ov-revenue">0.00</div>
+            <div class="stat-sub">د.ل</div>
+          </div>
+          <div class="stat-card info">
+            <span class="stat-label">عدد الفواتير</span>
+            <div class="stat-value" id="ov-invoices">0</div>
+            <div class="stat-sub">عبر كل العملاء</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div style="padding:16px;border-bottom:1px solid var(--border);">
+          <h3 style="font-size:14px;font-weight:700;">
+            أحدث العملاء المسجلين
+          </h3>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" style="min-width:auto;">
+            <thead>
+              <tr>
+                <th>الرمز</th>
+                <th>المتجر</th>
+                <th>المالك</th>
+                <th>الحالة</th>
+                <th>التسجيل</th>
+              </tr>
+            </thead>
+            <tbody id="ov-recent-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tenants Tab -->
+    <div id="tab-tenants" style="display:none;">
+      <div class="page-header">
+        <h2>
+          <svg class="icon icon-lg" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+          </svg>
+          العملاء
+        </h2>
+        <div class="page-actions">
+          <div class="search-box">
+            <input type="text" id="tenants-search"
+                   placeholder="ابحث بالاسم أو الكود أو الهاتف..."
+                   oninput="loadTenants()">
+          </div>
+          <button class="btn" onclick="openCodesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> أكواد الترخيص</button>
+          <button class="btn" onclick="openPricesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> أسعار الدفع الإلكتروني</button>
+          <button class="btn btn-primary" onclick="openCreateTenantModal()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            عميل جديد
+          </button>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>الكود</th>
+                <th>اسم المتجر</th>
+                <th>المالك</th>
+                <th>الهاتف</th>
+                <th>الخطة</th>
+                <th>الفروع</th>
+                <th>المستخدمون</th>
+                <th>المنتجات</th>
+                <th>المبيعات</th>
+                <th>الحالة</th>
+                <th>الانتهاء</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tenants-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Tab -->
+    <div id="tab-activity" style="display:none;">
+      <div class="page-header">
+        <h2>
+          <svg class="icon icon-lg" viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          سجل النشاطات
+        </h2>
+        <div class="page-actions">
+          <button class="btn btn-outline" onclick="loadActivity()">
+            <svg class="icon icon-sm" viewBox="0 0 24 24">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            تحديث
+          </button>
+        </div>
+      </div>
+
+      <div class="data-card" style="padding: 0;">
+        <div id="activity-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: عميل جديد -->
+<div class="modal-overlay" id="create-tenant-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>إنشاء عميل جديد</h3>
+      <button class="modal-close" onclick="closeModal('create-tenant-modal')">
+        <svg class="icon" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>اسم المتجر *</label>
+        <input type="text" id="nt_business_name" placeholder="مثال: مكتبة النور">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>اسم المالك *</label>
+          <input type="text" id="nt_owner_name">
+        </div>
+        <div class="form-group">
+          <label>الهاتف *</label>
+          <input type="tel" id="nt_owner_phone">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="nt_owner_email">
+      </div>
+      <div class="form-group">
+        <label>العنوان</label>
+        <input type="text" id="nt_address">
+      </div>
+      <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border);">
+      <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-secondary);">
+        بيانات دخول المدير
+      </h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>اسم المستخدم *</label>
+          <input type="text" id="nt_admin_username" value="admin">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور *</label>
+          <input type="text" id="nt_admin_password" value="" placeholder="8 أحرف على الأقل (غير شائعة)" autocomplete="off">
+        </div>
+      </div>
+      <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border);">
+      <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-secondary);">
+        الخطة والحدود
+      </h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>الخطة</label>
+          <select id="nt_plan">
+            <option value="basic">أساسي</option>
+            <option value="pro" selected>احترافي</option>
+            <option value="enterprise">متقدم</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>أيام التجربة</label>
+          <input type="number" id="nt_trial_days" value="14" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>أقصى عدد فروع</label>
+          <input type="number" id="nt_max_branches" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label>أقصى عدد مستخدمين</label>
+          <input type="number" id="nt_max_users" value="3" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>أقصى عدد منتجات</label>
+        <input type="number" id="nt_max_products" value="500" min="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('create-tenant-modal')">إلغاء</button>
+      <button class="btn-confirm" onclick="createTenant()" id="btn-create-tenant">
+        إنشاء العميل
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: تفاصيل عميل -->
+<div class="modal-overlay" id="tenant-detail-modal">
+  <div class="modal lg">
+    <div class="modal-header">
+      <h3 id="td-title">تفاصيل العميل</h3>
+      <button class="modal-close" onclick="closeModal('tenant-detail-modal')">
+        <svg class="icon" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" id="td-content"></div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="prices-modal">
+  <div class="modal">
+    <div class="modal-header"><h3><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> أسعار الباقات (MyPay)</h3><button class="modal-close" onclick="closeModal('prices-modal')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+    <div class="modal-body">
+      <p id="pr-note" style="font-size:13px;color:#64748b;margin-top:0"></p>
+      <div id="pr-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="codes-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> توليد أكواد ترخيص</h3>
+      <button class="modal-close" onclick="closeModal('codes-modal')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>الباقة</label>
+        <select id="lc_plan">
+          <option value="DEMO2H">تجريبية (ساعتان)</option><option value="WEEK">أسبوع</option>
+          <option value="MONTH" selected>شهر</option><option value="YEAR">سنة</option><option value="LIFE">دائمة (10 سنوات)</option>
+        </select></div>
+      <div class="form-group"><label>العدد</label><input type="number" id="lc_count" value="1" min="1" max="200"></div>
+      <div class="form-group"><label>ربط بعميل محدد (اختياري)</label>
+        <select id="lc_tenant"><option value="">— غير مرتبط (يصلح لأي عميل) —</option></select></div>
+      <button class="btn btn-primary" id="btn-gen-codes" onclick="generateCodes()">توليد</button>
+      <p style="font-size:12px;color:#888;margin-top:10px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> تظهر الأكواد مرة واحدة فقط ولا تُحفظ في النظام بصيغتها الأصلية. انسخها الآن.</p>
+      <textarea id="lc_result" readonly rows="6" style="width:100%;margin-top:8px;direction:ltr;font-family:monospace"></textarea>
+      <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('lc_result').value)">نسخ</button>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script>
+function esc(v){return String(v===null||v===undefined?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+</script>
+<script>
+/* ============================================================
+   الحالة
+   ============================================================ */
+const ADMIN = {
+  token: null,
+  user: null,
+  tenants: [],
+  apiUrl: window.location.origin + '/api'
+};
+
+/* ============================================================
+   Toast
+   ============================================================ */
+function showToast(msg, type = 'info', duration = 2500) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('hide');
+    setTimeout(() => t.remove(), 300);
+  }, duration);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+/* ============================================================
+   API
+   ============================================================ */
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (ADMIN.token) headers['Authorization'] = 'Bearer ' + ADMIN.token;
+  try {
+    const res = await fetch(ADMIN.apiUrl + path, { ...opts, headers });
+    if (res.status === 401 || res.status === 403) {
+      const data = await res.json().catch(() => ({}));
+      if (data.error && (data.error.includes('انتهت') || data.error.includes('مالك'))) {
+        showToast('غير مصرح لك بالدخول إلى لوحة المالك', 'error');
+        setTimeout(() => location.reload(), 2000);
+        return { ok: false };
+      }
+    }
+    return await res.json();
+  } catch (e) {
+    return { ok: false, error: 'خطأ في الاتصال' };
+  }
+}
+
+/* ============================================================
+   تسجيل الدخول
+   ============================================================ */
+async function adminLogin() {
+  const u = document.getElementById('admin-username').value.trim();
+  const p = document.getElementById('admin-password').value;
+  const err = document.getElementById('admin-login-error');
+  const btn = document.getElementById('admin-login-btn');
+
+  if (!u || !p) {
+    err.textContent = 'الرجاء إدخال البيانات';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ الدخول...';
+  err.style.display = 'none';
+
+  try {
+    const res = await fetch(ADMIN.apiUrl + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await res.json();
+
+    if (data.ok && data.user.role === 'owner') {
+      ADMIN.token = data.token;
+      ADMIN.user = data.user;
+      localStorage.setItem('manara_admin_token', data.token);
+      localStorage.setItem('manara_admin_user', JSON.stringify(data.user));
+      onAdminLoginSuccess();
+    } else if (data.ok) {
+      err.textContent = 'هذا الحساب ليس مالكاً للمنظومة';
+      err.style.display = 'block';
+    } else {
+      err.textContent = data.error || 'فشل الدخول';
+      err.style.display = 'block';
+    }
+  } catch (e) {
+    err.textContent = 'خطأ في الاتصال';
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'دخول';
+  }
+}
+
+function onAdminLoginSuccess() {
+  document.getElementById('admin-name').textContent = ADMIN.user.name;
+  document.getElementById('admin-avatar').textContent = (ADMIN.user.name || '?').charAt(0);
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('app-view').style.display = 'block';
+  loadAll();
+}
+
+function adminLogout() {
+  localStorage.removeItem('manara_admin_token');
+  localStorage.removeItem('manara_admin_user');
+  location.reload();
+}
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  ['overview', 'tenants', 'activity'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  if (tab === 'overview') loadOverview();
+  if (tab === 'tenants') loadTenants();
+  if (tab === 'activity') loadActivity();
+}
+
+/* ============================================================
+   تحميل شامل
+   ============================================================ */
+async function loadAll() {
+  await Promise.all([loadOverview(), loadTenants()]);
+}
+
+/* ============================================================
+   نظرة عامة
+   ============================================================ */
+async function loadOverview() {
+  const res = await api('/admin/stats');
+  if (!res.ok) return;
+
+  const d = res.data;
+  document.getElementById('ov-total').textContent = d.tenants.total;
+  document.getElementById('ov-active').textContent = d.tenants.active + ' نشط';
+  document.getElementById('ov-on-system').textContent = d.tenants.active;
+  document.getElementById('ov-trials').textContent = d.tenants.trials;
+  document.getElementById('ov-expired').textContent =
+    parseInt(d.tenants.expired) + parseInt(d.tenants.suspended);
+  document.getElementById('ov-revenue').textContent =
+    parseFloat(d.financials.total_sales).toFixed(2) + ' د.ل';
+  document.getElementById('ov-invoices').textContent = d.financials.total_invoices;
+
+  // أحدث العملاء
+  const tbody = document.getElementById('ov-recent-table');
+  tbody.innerHTML = d.recent_tenants.map(t => `
+    <tr>
+      <td><strong>${esc(t.tenant_code)}</strong></td>
+      <td>${esc(t.business_name)}</td>
+      <td>${esc(t.owner_name)}</td>
+      <td>${t.is_suspended
+        ? '<span class="tag danger">موقوف</span>'
+        : t.is_active
+          ? '<span class="tag success">نشط</span>'
+          : '<span class="tag">معطل</span>'}</td>
+      <td>${new Date(t.created_at).toLocaleDateString('ar-LY')}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" class="empty-state">لا يوجد عملاء</td></tr>';
+}
+
+/* ============================================================
+   العملاء
+   ============================================================ */
+async function loadTenants() {
+  const q = document.getElementById('tenants-search').value.trim();
+  let url = '/admin/tenants';
+  if (q) url += '?search=' + encodeURIComponent(q);
+
+  const res = await api(url);
+  if (!res.ok) return showToast(res.error, 'error');
+
+  ADMIN.tenants = res.data;
+  renderTenantsTable();
+}
+
+function renderTenantsTable() {
+  const tbody = document.getElementById('tenants-table');
+  if (!ADMIN.tenants.length) {
+    tbody.innerHTML = '<tr><td colspan="12" class="empty-state">لا يوجد عملاء</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = ADMIN.tenants.map(t => {
+    let statusTag = '<span class="tag success">نشط</span>';
+    if (t.is_suspended) statusTag = '<span class="tag danger">موقوف</span>';
+    else if (!t.is_active) statusTag = '<span class="tag">معطل</span>';
+    else if (t.is_trial) statusTag = '<span class="tag info">تجربة</span>';
+
+    let expiryText = '-';
+    if (t.subscription_end) {
+      const end = new Date(t.subscription_end);
+      const daysLeft = Math.ceil((end - new Date()) / 86400000);
+      if (daysLeft < 0) {
+        expiryText = `<span class="tag danger">منتهي</span>`;
+      } else if (daysLeft < 7) {
+        expiryText = `<span class="tag warn">${daysLeft} يوم</span>`;
+      } else {
+        expiryText = end.toLocaleDateString('ar-LY');
+      }
+    }
+
+    return `
+      <tr>
+        <td><strong>${esc(t.tenant_code)}</strong></td>
+        <td>${esc(t.business_name)}</td>
+        <td>${esc(t.owner_name)}</td>
+        <td>${esc(t.owner_phone)}</td>
+        <td><span class="tag info">${esc(t.plan)}</span></td>
+        <td>${t.branch_count}</td>
+        <td>${t.user_count}</td>
+        <td>${t.product_count}</td>
+        <td>${parseFloat(t.total_sales).toFixed(0)} د.ل</td>
+        <td>${statusTag}</td>
+        <td>${expiryText}</td>
+        <td>
+          <div style="display:flex;gap:4px;justify-content:flex-end;">
+            <button class="btn-icon" onclick="viewTenant('${t.id}')" title="عرض">
+              <svg class="icon icon-sm" viewBox="0 0 24 24">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            <button class="btn-icon ${t.is_suspended ? 'success' : 'warn'}"
+                    onclick="toggleSuspend('${t.id}', ${t.is_suspended})"
+                    title="${t.is_suspended ? 'تشغيل' : 'إيقاف'}">
+              <svg class="icon icon-sm" viewBox="0 0 24 24">
+                ${t.is_suspended
+                  ? '<polyline points="20 6 9 17 4 12"/>'
+                  : '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>'}
+              </svg>
+            </button>
+            <button class="btn-icon" onclick="renewTenant('${t.id}')" title="تجديد">
+              <svg class="icon icon-sm" viewBox="0 0 24 24">
+                <polyline points="23 4 23 10 17 10"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ============================================================
+   عميل جديد
+   ============================================================ */
+
+async function openPricesModal() {
+  const r = await api('/payments/plan-prices');
+  if (!r.ok) return showToast(r.error || 'تعذر التحميل', 'error');
+  document.getElementById('pr-note').textContent = r.configured ? 'بوابة MyPay مهيّأة. الباقة بلا سعر أو الموقوفة لا تظهر للعملاء.' : ' مفاتيح MyPay غير مضبوطة في ملف .env، لن يظهر الدفع للعملاء حتى تُضبط.';
+  document.getElementById('pr-list').innerHTML = r.data.map(p => `<div class="form-group" style="display:flex;gap:8px;align-items:center">
+    <span style="flex:1">${esc(p.name)}</span>
+    <input type="number" min="0.01" step="0.01" id="pp_${p.plan}" value="${p.price ?? ''}" placeholder="السعر د.ل" style="width:110px">
+    <label style="white-space:nowrap"><input type="checkbox" id="pa_${p.plan}" ${p.is_active ? 'checked' : ''}> مفعّل</label>
+    <button class="btn" onclick="savePrice('${p.plan}')">حفظ</button></div>`).join('');
+  openModal('prices-modal');
+}
+async function savePrice(plan) {
+  const price = parseFloat(document.getElementById('pp_' + plan).value);
+  const res = await api('/payments/plan-prices', { method: 'PUT', body: JSON.stringify({ plan, price, is_active: document.getElementById('pa_' + plan).checked }) });
+  showToast(res.ok ? 'تم الحفظ' : (res.error || 'فشل الحفظ'), res.ok ? 'success' : 'error');
+}
+
+async function openCodesModal() {
+  document.getElementById('lc_result').value = '';
+  const sel = document.getElementById('lc_tenant');
+  const r = await api('/admin/tenants');
+  sel.innerHTML = '<option value="">— غير مرتبط (يصلح لأي عميل) —</option>' +
+    (r.ok ? r.data.map(t => `<option value="${esc(t.id)}">${esc(t.business_name)} (${esc(t.tenant_code)})</option>`).join('') : '');
+  openModal('codes-modal');
+}
+async function generateCodes() {
+  const btn = document.getElementById('btn-gen-codes');
+  btn.disabled = true;
+  const res = await api('/admin/license-codes', { method: 'POST', body: JSON.stringify({
+    plan: document.getElementById('lc_plan').value,
+    count: parseInt(document.getElementById('lc_count').value) || 1,
+    tenant_id: document.getElementById('lc_tenant').value || undefined
+  })});
+  btn.disabled = false;
+  if (res.ok) document.getElementById('lc_result').value = res.data.codes.join('\n');
+  else showToast(res.error || 'فشل التوليد', 'error');
+}
+
+function openCreateTenantModal() {
+  ['nt_business_name', 'nt_owner_name', 'nt_owner_phone', 'nt_owner_email', 'nt_address']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nt_admin_username').value = 'admin';
+  document.getElementById('nt_admin_password').value = '';
+  document.getElementById('nt_plan').value = 'pro';
+  document.getElementById('nt_trial_days').value = 14;
+  document.getElementById('nt_max_branches').value = 1;
+  document.getElementById('nt_max_users').value = 3;
+  document.getElementById('nt_max_products').value = 500;
+  openModal('create-tenant-modal');
+}
+
+async function createTenant() {
+  const body = {
+    business_name: document.getElementById('nt_business_name').value.trim(),
+    owner_name: document.getElementById('nt_owner_name').value.trim(),
+    owner_phone: document.getElementById('nt_owner_phone').value.trim(),
+    owner_email: document.getElementById('nt_owner_email').value.trim() || null,
+    address: document.getElementById('nt_address').value.trim() || null,
+    admin_username: document.getElementById('nt_admin_username').value.trim(),
+    admin_password: document.getElementById('nt_admin_password').value,
+    plan: document.getElementById('nt_plan').value,
+    max_branches: parseInt(document.getElementById('nt_max_branches').value),
+    max_users: parseInt(document.getElementById('nt_max_users').value),
+    max_products: parseInt(document.getElementById('nt_max_products').value)
+  };
+
+  if (!body.business_name || !body.owner_name || !body.owner_phone) {
+    return showToast('اسم المتجر واسم المالك والهاتف مطلوبة', 'error');
+  }
+  if (!body.admin_username || !body.admin_password) {
+    return showToast('بيانات دخول المدير مطلوبة', 'error');
+  }
+
+  const btn = document.getElementById('btn-create-tenant');
+  btn.disabled = true;
+  btn.textContent = 'جارٍ الإنشاء...';
+
+  const res = await api('/admin/tenants', {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'إنشاء العميل';
+
+  if (res.ok) {
+    showToast(`تم إنشاء العميل ${esc(res.data.tenant_code)} بنجاح`, 'success', 4000);
+    closeModal('create-tenant-modal');
+    loadAll();
+  } else {
+    showToast(res.error || 'فشل الإنشاء', 'error', 5000);
+  }
+}
+
+/* ============================================================
+   تفاصيل عميل
+   ============================================================ */
+async function viewTenant(id) {
+  const res = await api('/admin/tenants/' + id);
+  if (!res.ok) return showToast(res.error, 'error');
+
+  const { tenant, users, branches, stats } = res.data;
+  document.getElementById('td-title').textContent = tenant.business_name;
+
+  const html = `
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-card info">
+        <span class="stat-label">المنتجات</span>
+        <div class="stat-value">${stats.products}</div>
+      </div>
+      <div class="stat-card success">
+        <span class="stat-label">العملاء</span>
+        <div class="stat-value">${stats.customers}</div>
+      </div>
+      <div class="stat-card warn">
+        <span class="stat-label">الفواتير</span>
+        <div class="stat-value">${stats.invoices}</div>
+      </div>
+      <div class="stat-card danger">
+        <span class="stat-label">إجمالي المبيعات</span>
+        <div class="stat-value">${parseFloat(stats.total_sales).toFixed(0)}</div>
+      </div>
+    </div>
+
+    <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clipboard"/></svg> معلومات العميل
+    </h4>
+    <table class="data-table" style="min-width:auto;margin-bottom:20px;">
+      <tr><td style="width:150px;"><strong>الكود</strong></td><td>${esc(tenant.tenant_code)}</td></tr>
+      <tr><td><strong>المالك</strong></td><td>${esc(tenant.owner_name)}</td></tr>
+      <tr><td><strong>الهاتف</strong></td><td>${esc(tenant.owner_phone)}</td></tr>
+      <tr><td><strong>البريد</strong></td><td>${esc(tenant.owner_email || '-')}</td></tr>
+      <tr><td><strong>العنوان</strong></td><td>${esc(tenant.address || '-')}</td></tr>
+      <tr><td><strong>الخطة</strong></td><td><span class="tag info">${esc(tenant.plan)}</span></td></tr>
+      <tr><td><strong>الاشتراك</strong></td><td>${tenant.subscription_end ? new Date(tenant.subscription_end).toLocaleDateString('ar-LY') : '-'}</td></tr>
+      <tr><td><strong>الفروع المسموحة</strong></td><td>${tenant.max_branches}</td></tr>
+      <tr><td><strong>المستخدمون المسموحون</strong></td><td>${tenant.max_users}</td></tr>
+      <tr><td><strong>المنتجات المسموحة</strong></td><td>${tenant.max_products}</td></tr>
+      <tr><td><strong>مفتاح الترخيص</strong></td><td style="font-family:monospace;font-size:11px;">${tenant.license_key || '-'}</td></tr>
+    </table>
+
+    <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg> المستخدمون (${users.length})
+    </h4>
+    <table class="data-table" style="min-width:auto;margin-bottom:20px;">
+      <thead><tr><th>اسم الدخول</th><th>الاسم</th><th>الدور</th><th>آخر دخول</th></tr></thead>
+      <tbody>
+        ${users.map(u => `
+          <tr>
+            <td><strong>${esc(u.username)}</strong></td>
+            <td>${esc(u.full_name)}</td>
+            <td><span class="tag">${u.role}</span></td>
+            <td>${u.last_login ? new Date(u.last_login).toLocaleString('ar-LY') : 'لم يدخل'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> الفروع (${branches.length})
+    </h4>
+    <table class="data-table" style="min-width:auto;">
+      <thead><tr><th>الكود</th><th>الاسم</th><th>العنوان</th><th>رصيد الخزينة</th></tr></thead>
+      <tbody>
+        ${branches.map(b => `
+          <tr>
+            <td>${b.branch_code}</td>
+            <td>${esc(b.name)} ${b.is_main ? '<span class="tag success">رئيسي</span>' : ''}</td>
+            <td>${esc(b.address || '-')}</td>
+            <td><strong>${parseFloat(b.cash_balance).toFixed(2)} د.ل</strong></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById('td-content').innerHTML = html;
+  openModal('tenant-detail-modal');
+}
+
+/* ============================================================
+   إيقاف/تشغيل
+   ============================================================ */
+async function toggleSuspend(id, currentSuspended) {
+  const action = currentSuspended ? 'تشغيل' : 'إيقاف';
+  let reason = null;
+  if (!currentSuspended) {
+    reason = prompt('سبب الإيقاف (اختياري):') || 'غير محدد';
+  }
+  if (!confirm(`هل أنت متأكد من ${action} هذا العميل؟`)) return;
+
+  const res = await api(`/admin/tenants/${id}/suspend`, {
+    method: 'POST',
+    body: JSON.stringify({ suspend: !currentSuspended, reason })
+  });
+
+  if (res.ok) {
+    showToast(`تم ${action} العميل`, 'success');
+    loadTenants();
+  } else {
+    showToast(res.error, 'error');
+  }
+}
+
+/* ============================================================
+   تجديد اشتراك
+   ============================================================ */
+async function renewTenant(id) {
+  const months = prompt('عدد الأشهر للتجديد:', '1');
+  if (!months || isNaN(months) || parseInt(months) <= 0) return;
+
+  const res = await api(`/admin/tenants/${id}/renew`, {
+    method: 'POST',
+    body: JSON.stringify({ months: parseInt(months) })
+  });
+
+  if (res.ok) {
+    showToast(`تم التجديد ${months} شهر`, 'success');
+    loadTenants();
+  } else {
+    showToast(res.error, 'error');
+  }
+}
+
+/* ============================================================
+   سجل النشاطات
+   ============================================================ */
+async function loadActivity() {
+  const res = await api('/admin/activity?limit=100');
+  if (!res.ok) return showToast(res.error, 'error');
+
+  const list = document.getElementById('activity-list');
+  if (!res.data.length) {
+    list.innerHTML = '<div class="empty-state"><p>لا توجد نشاطات</p></div>';
+    return;
+  }
+
+  const actionLabels = {
+    login: 'تسجيل دخول',
+    logout: 'تسجيل خروج',
+    create_invoice: 'إنشاء فاتورة',
+    cancel_invoice: 'إلغاء فاتورة',
+    create_product: 'إضافة منتج',
+    update_product: 'تعديل منتج',
+    delete_product: 'حذف منتج',
+    create_customer: 'إضافة عميل',
+    update_customer: 'تعديل عميل',
+    delete_customer: 'حذف عميل',
+    create_purchase: 'فاتورة شراء',
+    create_return: 'مرتجع',
+    create_expense: 'مصروف',
+    create_tenant: 'عميل جديد',
+    update_tenant: 'تعديل عميل',
+    suspend_tenant: 'إيقاف عميل',
+    activate_tenant: 'تشغيل عميل',
+    renew_tenant: 'تجديد اشتراك',
+    change_password: 'تغيير كلمة المرور'
+  };
+
+  list.innerHTML = res.data.map(a => `
+    <div class="activity-item">
+      <div class="activity-icon">
+        <svg class="icon icon-sm" viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div class="activity-content">
+        <div class="activity-action">${esc(actionLabels[a.action] || a.action)}</div>
+        <div class="activity-meta">
+          ${a.user_name ? `<span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg> ${esc(a.user_name)}</span>` : ''}
+          ${a.business_name ? `<span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> ${esc(a.business_name)}</span>` : ''}
+          <span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg> ${new Date(a.created_at).toLocaleString('ar-LY')}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   استرجاع الجلسة
+   ============================================================ */
+async function restoreSession() {
+  const token = localStorage.getItem('manara_admin_token');
+  const user = localStorage.getItem('manara_admin_user');
+  if (!token || !user) return false;
+
+  ADMIN.token = token;
+  try {
+    const res = await api('/auth/me');
+    if (res.ok && res.data.role === 'owner') {
+      ADMIN.user = {
+        name: res.data.full_name,
+        role: 'owner'
+      };
+      onAdminLoginSuccess();
+      return true;
+    }
+  } catch (e) {}
+  localStorage.removeItem('manara_admin_token');
+  localStorage.removeItem('manara_admin_user');
+  return false;
+}
+
+/* ============================================================
+   Init
+   ============================================================ */
+(async function init() {
+  console.log('%c لوحة المالك', 'font-size:16px;font-weight:bold;');
+  await restoreSession();
+})();
+
+// ESC لإغلاق النوافذ
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+  }
+});
+</script>
+</body>
+</html>

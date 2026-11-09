@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1c38">
+<title>المنارة — المخزون المتقدم</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<script>try{var t=localStorage.getItem("manara_theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<script src="/js/barcode.js"></script>
+<script src="/js/save-file.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--text:#14213a;--muted:#5d6b86;--line:#dde4f0;--pri:#12315c;--acc:#f2a900;--ok:#15803d;--bad:#dc2626;--warn:#b45309}
+:root[data-theme=dark]{color-scheme:dark;--bg:#08111f;--card:#101b30;--text:#e7edf8;--muted:#9fb1cf;--line:#21314f;--pri:#2a5db0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans Arabic","Segoe UI",Cairo,Tahoma,system-ui,sans-serif;line-height:1.7}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#0c2243,#081733);color:#fff;position:sticky;top:0;z-index:5}
+header img{width:38px;height:38px;border-radius:10px}
+header h1{font-size:17px;margin:0;flex:1}
+header a{color:#ffd36b;text-decoration:none;font-weight:700}
+header button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:10px;width:34px;height:34px;cursor:pointer}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:4}
+nav.tabs button{border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:999px;font:inherit;cursor:pointer;white-space:nowrap}
+nav.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 4px}.sub{margin:0 0 12px;color:var(--muted);font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:10px}
+.field{flex:1;min-width:140px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+input:focus,select:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(242,169,0,.3)}
+.btn{padding:10px 16px;border:0;border-radius:10px;background:var(--pri);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.btn.acc{background:var(--acc);color:#1a1300}.btn.sec{background:transparent;color:var(--text);border:1px solid var(--line)}.btn.bad{background:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{color:var(--muted)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:10px}
+.neg{color:var(--bad);font-weight:700}.pos{color:var(--ok);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:var(--bg)}.kpi b{display:block;font-size:20px}.kpi span{font-size:12px;color:var(--muted)}
+.big{font-size:22px;padding:14px;text-align:center;letter-spacing:1px}
+.banner{margin-top:10px;padding:12px;border-radius:12px;background:var(--bg);border:1px dashed var(--line);text-align:center;min-height:52px}
+.pick{border:1px solid var(--line);border-radius:10px;margin-top:4px;max-height:220px;overflow:auto}
+.pick div{padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--line)}.pick div:hover{background:var(--bg)}
+.hidden{display:none!important}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;background:var(--bg);border:1px solid var(--line)}
+#toast{position:fixed;inset-inline:16px;bottom:16px;max-width:420px;margin-inline:auto;padding:12px 16px;border-radius:12px;background:#0a1c38;color:#fff;display:none;z-index:50;text-align:center}
+/* الملصقات */
+#labels-preview{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.label{border:1px dashed #999;background:#fff;color:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:1mm;text-align:center}
+.label .n{font-size:9px;font-weight:700;line-height:1.1;max-height:2.3em;overflow:hidden}
+.label .p{font-size:12px;font-weight:800}
+.label svg{max-width:100%;height:auto}
+#print-area{display:none}
+@media print{
+  body>*:not(#print-area){display:none!important}
+  #print-area{display:flex!important;flex-wrap:wrap;gap:0}
+  #print-area .label{border:0;break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+<link rel="stylesheet" href="/css/ui.css">
+<script src="/js/icons.js"></script>
+</head>
+<body>
+<header>
+  <img src="/icons/logo.svg" alt="">
+  <h1>المخزون المتقدم</h1>
+  <button id="theme" aria-label="تبديل الوضع"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  <a href="/">← النظام</a>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-t="stk" class="on">الجرد</button>
+  <button data-t="adj">التسويات والحركة</button>
+  <button data-t="trf">التحويل بين الفروع</button>
+  <button data-t="ro">إعادة الطلب</button>
+  <button data-t="promo">العروض</button>
+  <button data-t="lbl">ملصقات الباركود</button>
+</nav>
+<main>
+
+<!-- ============ الجرد ============ -->
+<section id="t-stk">
+  <div class="card" id="stk-list">
+    <h2>جلسات الجرد</h2>
+    <p class="sub">افتح جلسة، ثم امسح كل صنف على الرف (كل مسحة = +1، مسح الكرتونة يضيف عدد حباتها). عند الإغلاق تُطبَّق الفروقات على المخزون وتُسجَّل في سجل الحركة.</p>
+    <div class="row" style="margin-top:0"><div class="field" id="stk-branch-wrap"><label>الفرع</label><select id="stk-branch"></select></div>
+      <div class="field"><label>اسم الجلسة (اختياري)</label><input id="stk-name" placeholder="جرد نهاية الشهر"></div>
+      <button class="btn acc" id="stk-new">+ جلسة جديدة</button></div>
+    <div class="scroll"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>الحالة</th><th>الأصناف</th><th>التاريخ</th><th></th></tr></thead><tbody id="stk-rows"></tbody></table></div>
+  </div>
+  <div class="card hidden" id="stk-work">
+    <div class="row" style="margin-top:0;align-items:center"><h2 id="stk-title" style="flex:1"></h2><button class="btn sec" id="stk-back">← الجلسات</button></div>
+    <div class="row">
+      <div class="field" style="flex:3"><label>امسح الباركود (الماسح يعمل تلقائياً) أو اكتبه ثم Enter</label>
+        <input id="stk-code" class="big" data-scan-target="1" autocomplete="off" inputmode="numeric" placeholder="امسح الباركود الآن"></div>
+      <button class="btn" id="stk-cam"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg> كاميرا</button>
+    </div>
+    <div class="banner" id="stk-banner">بانتظار المسح…</div>
+    <div class="row"><div class="field" style="flex:3"><label>أو ابحث بالاسم وأدخل الكمية الفعلية</label><input id="stk-search" placeholder="اسم المنتج" autocomplete="off"><div id="stk-pick" class="pick hidden"></div></div>
+      <div class="field"><label>الكمية الفعلية</label><input id="stk-qty" type="number" min="0" step="any"></div><button class="btn sec" id="stk-set">تعيين</button></div>
+    <div class="kpis"><div class="kpi"><b id="k-n">0</b><span>صنف معدود</span></div><div class="kpi"><b class="neg" id="k-short">0</b><span>قيمة العجز</span></div><div class="kpi"><b class="pos" id="k-sur">0</b><span>قيمة الزيادة</span></div></div>
+    <div class="scroll"><table><thead><tr><th>المنتج</th><th>المتوقع</th><th>المعدود</th><th>الفرق</th><th>قيمة الفرق</th></tr></thead><tbody id="stk-items"></tbody></table></div>
+    <div class="row"><button class="btn" id="stk-close">إغلاق الجرد وتطبيق الفروقات</button><button class="btn sec" id="stk-cancel">إلغاء بدون تطبيق</button></div>
+  </div>
+</section>
+
+<!-- ============ التسويات ============ -->
+<section id="t-adj" class="hidden">
+  <div class="card">
+    <h2>تسوية مخزون بسبب</h2>
+    <p class="sub">للتالف والمنتهي والفاقد والاستهلاك الداخلي. كل تسوية تُسجَّل باسمك وسببها ولا يمكن حذفها.</p>
+    <div class="row" style="margin-top:0"><div class="field" style="flex:3"><label>المنتج (امسح الباركود أو ابحث)</label><input id="adj-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="adj-pick" class="pick hidden"></div></div><button class="btn sec" id="adj-cam" aria-label="مسح بالكاميرا"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button></div>
+    <div class="banner" id="adj-sel">لم يُختر منتج</div>
+    <div class="row">
+      <div class="field"><label>السبب</label><select id="adj-reason"></select></div>
+      <div class="field"><label>الفرق (+زيادة / −نقص)</label><input id="adj-delta" type="number" step="any" placeholder="-3"></div>
+      <div class="field"><label>ملاحظة</label><input id="adj-notes"></div>
+      <button class="btn" id="adj-go">تسجيل التسوية</button>
+    </div>
+  </div>
+  <div class="card"><h2>سجل حركة المخزون</h2>
+    <div class="row" style="margin-top:0"><div class="field"><label>النوع</label><select id="mv-type"><option value="">الكل</option></select></div>
+      <div class="field"><label>من</label><input type="date" id="mv-from"></div><div class="field"><label>إلى</label><input type="date" id="mv-to"></div><button class="btn sec" id="mv-go">عرض</button></div>
+    <div class="scroll"><table><thead><tr><th>الوقت</th><th>المنتج</th><th>النوع</th><th>الكمية</th><th>قبل</th><th>بعد</th><th>المستخدم</th><th>ملاحظة</th></tr></thead><tbody id="mv-rows"></tbody></table></div></div>
+</section>
+
+<!-- ============ التحويل ============ -->
+<section id="t-trf" class="hidden">
+  <div class="card"><h2>تحويل مخزون بين الفروع</h2>
+    <p class="sub">يُخصم من فرع المصدر ويُضاف فوراً للفرع المستلم (يُنشأ المنتج هناك تلقائياً إن لم يوجد).</p>
+    <div class="row" style="margin-top:0"><div class="field" id="trf-from-wrap"><label>من فرع</label><select id="trf-from"></select></div><div class="field"><label>إلى فرع</label><select id="trf-to"></select></div></div>
+    <div class="row"><div class="field" style="flex:3"><label>أضف صنفاً (امسح أو ابحث)</label><input id="trf-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="trf-pick" class="pick hidden"></div></div><button class="btn sec" id="trf-cam" aria-label="مسح بالكاميرا"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button></div>
+    <div class="scroll"><table><thead><tr><th>المنتج</th><th>المتوفر</th><th>الكمية</th><th></th></tr></thead><tbody id="trf-items"></tbody></table></div>
+    <div class="row"><div class="field"><label>ملاحظة</label><input id="trf-notes"></div><button class="btn" id="trf-go">تنفيذ التحويل</button></div>
+  </div>
+  <div class="card"><h2>آخر التحويلات</h2><div class="scroll"><table><thead><tr><th>الرقم</th><th>من</th><th>إلى</th><th>الأصناف</th><th>التكلفة</th><th>التاريخ</th></tr></thead><tbody id="trf-rows"></tbody></table></div></div>
+</section>
+
+<!-- ============ إعادة الطلب ============ -->
+<section id="t-ro" class="hidden">
+  <div class="card"><h2>اقتراح إعادة الطلب</h2>
+    <p class="sub">يحسب معدل البيع اليومي ويقترح كمية تكفي المدة المطلوبة (أو ضعف الحد الأدنى أيهما أكبر) للأصناف التي ستنفد قريباً.</p>
+    <div class="row" style="margin-top:0"><div class="field"><label>معدل البيع من آخر (يوم)</label><input id="ro-days" type="number" value="30" min="7" max="365"></div>
+      <div class="field"><label>تغطية مطلوبة (يوم)</label><input id="ro-cover" type="number" value="14" min="1" max="90"></div>
+      <button class="btn" id="ro-go">حساب</button><button class="btn sec" id="ro-csv">تصدير CSV</button></div>
+    <div class="kpis"><div class="kpi"><b id="ro-n">0</b><span>صنف يحتاج طلباً</span></div><div class="kpi"><b id="ro-cost">0</b><span>تكلفة تقديرية</span></div></div>
+    <div class="scroll"><table><thead><tr><th>المنتج</th><th>المخزون</th><th>المعدل/يوم</th><th>يكفي (يوم)</th><th>المقترح</th><th>التكلفة</th><th>آخر مورّد</th></tr></thead><tbody id="ro-rows"></tbody></table></div></div>
+</section>
+
+<!-- ============ العروض ============ -->
+<section id="t-promo" class="hidden">
+  <div class="card"><h2>عرض جديد</h2>
+    <p class="sub">يُطبَّق تلقائياً في الكاشير خلال مدة العرض، ويُحتسب الحد الأدنى للسعر على سعر العرض. إن تعدّدت العروض يُؤخذ الأقل سعراً.</p>
+    <div class="row" style="margin-top:0">
+      <div class="field"><label>اسم العرض</label><input id="pr-name" placeholder="مثال: تخفيضات نهاية الأسبوع"></div>
+      <div class="field"><label>النوع</label><select id="pr-kind"><option value="percent">نسبة خصم %</option><option value="fixed_price">سعر ثابت</option></select></div>
+      <div class="field"><label>القيمة</label><input id="pr-val" type="number" min="0.01" step="any"></div></div>
+    <div class="row">
+      <div class="field"><label>ينطبق على</label><select id="pr-target"><option value="product">منتج</option><option value="category">تصنيف</option></select></div>
+      <div class="field" id="pr-prod-f"><label>المنتج</label><select id="pr-prod"></select></div>
+      <div class="field hidden" id="pr-cat-f"><label>التصنيف</label><input id="pr-cat" placeholder="اسم التصنيف كما في المنتجات"></div></div>
+    <div class="row">
+      <div class="field"><label>من</label><input id="pr-from" type="datetime-local"></div>
+      <div class="field"><label>إلى (اختياري)</label><input id="pr-to" type="datetime-local"></div>
+      <button class="btn acc" id="pr-add">إضافة العرض</button></div></div>
+  <div class="card"><h2>العروض</h2>
+    <div class="scroll"><table><thead><tr><th>العرض</th><th>الهدف</th><th>الخصم</th><th>الفترة</th><th>الحالة</th><th></th></tr></thead><tbody id="pr-rows"></tbody></table></div></div>
+</section>
+
+<!-- ============ ملصقات ============ -->
+<section id="t-lbl" class="hidden">
+  <div class="card"><h2>طباعة ملصقات الباركود</h2>
+    <p class="sub">الملصقات تُرسَم بصيغة EAN-13/UPC-A للباركودات الصالحة (ومنها المولَّدة داخلياً)، وبصيغة Code 128 لأي رمز نصي آخر (مثل 1010 أو CTN-1).</p>
+    <div class="row" style="margin-top:0"><div class="field"><label>المقاس</label><select id="lb-size"><option value="50x30">50 × 30 مم</option><option value="40x25">40 × 25 مم</option><option value="60x40">60 × 40 مم</option><option value="38x25">38 × 25 مم</option></select></div>
+      <div class="field"><label>عدد النسخ لكل منتج</label><input id="lb-copies" type="number" value="1" min="1" max="200"></div>
+      <label style="display:flex;gap:6px;align-items:center;margin:0 0 10px"><input type="checkbox" id="lb-price" checked style="width:auto"> يظهر السعر</label>
+      <button class="btn acc" id="lb-gen">توليد باركود للمنتجات الناقصة</button></div>
+    <div class="row"><div class="field" style="flex:3"><label>بحث وإضافة</label><input id="lb-search" autocomplete="off" placeholder="اسم أو باركود"><div id="lb-pick" class="pick hidden"></div></div>
+      <button class="btn sec" id="lb-all">إضافة كل المنتجات</button><button class="btn sec" id="lb-clear">مسح القائمة</button><button class="btn" id="lb-print"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg> طباعة</button></div>
+    <div id="lb-count" class="sub" style="margin-top:8px"></div>
+    <div id="labels-preview"></div>
+  </div>
+</section>
+</main>
+<div id="print-area"></div>
+<div id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const token = localStorage.getItem('manara_token');
+if (!token) location.replace('/');
+let ME = {}; try { ME = JSON.parse(localStorage.getItem('manara_user') || '{}'); } catch (e) {}
+const IS_ADMIN = ME.role === 'owner' || ME.role === 'tenant_admin';
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f2 = (n) => (Math.round(parseFloat(n || 0) * 100) / 100).toLocaleString('en-US');
+const f3 = (n) => String(Math.round(parseFloat(n || 0) * 1000) / 1000);
+function toast(m, ms = 3500) { const t = $('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = 'none', ms); }
+$('theme').onclick = () => { const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); try { localStorage.setItem('manara_theme', n); } catch (e) {} };
+
+async function api(path, method = 'GET', body) {
+  try {
+    const res = await fetch('/api' + path, { method, headers: { 'Authorization': 'Bearer ' + token, ...(body ? { 'Content-Type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
+    if (res.status === 401) { toast('انتهت الجلسة'); setTimeout(() => location.replace('/'), 1200); return { ok: false, error: 'auth' }; }
+    const j = await res.json().catch(() => ({ ok: false, error: 'استجابة غير صالحة' }));
+    if (!res.ok && j.ok !== false) j.ok = false;
+    return j;
+  } catch (e) { return { ok: false, error: 'لا يوجد اتصال بالخادم' }; }
+}
+
+// ---------- بيانات مشتركة ----------
+let PRODUCTS = [], BRANCHES = [];
+const REASONS = { damage: 'تالف', expired: 'منتهي الصلاحية', theft: 'فقد/سرقة', found: 'زيادة وُجدت', correction: 'تصحيح خطأ', internal_use: 'استهلاك داخلي', gift: 'عينة/هدية', other: 'أخرى' };
+const TYPE_AR = { ...REASONS, sale: 'بيع', purchase: 'شراء', return: 'مرتجع', adjustment: 'تعديل', stocktake: 'جرد', transfer_out: 'تحويل صادر', transfer_in: 'تحويل وارد', sale_cancel: 'إلغاء بيع' };
+async function loadProducts() { const r = await api('/products'); if (r.ok) PRODUCTS = r.data; }
+async function loadBranches() {
+  const r = await api('/branches');
+  BRANCHES = r.ok ? r.data : [];
+  const opts = BRANCHES.map(b => `<option value="${esc(b.id)}">${esc(b.name)}${b.is_main ? ' (رئيسي)' : ''}</option>`).join('');
+  ['stk-branch', 'trf-from', 'trf-to'].forEach(id => $(id).innerHTML = opts);
+  if (BRANCHES.length > 1) $('trf-to').selectedIndex = 1;
+  if (!IS_ADMIN) { $('stk-branch-wrap').classList.add('hidden'); $('trf-from-wrap').classList.add('hidden'); if (ME.branch_id) { $('stk-branch').value = ME.branch_id; $('trf-from').value = ME.branch_id; } }
+}
+const prodsOf = (branchId) => PRODUCTS.filter(p => !p.is_service && (!branchId || p.branch_id === branchId));
+
+/** منتقي بحث: يعرض نتائج ويستدعي onPick(product, hit) — الباركود الدقيق يُختار مباشرة عند Enter */
+function wirePicker(inputId, pickId, getList, onPick) {
+  const inp = $(inputId), box = $(pickId);
+  const show = () => {
+    const q = inp.value.trim().toLowerCase(); if (!q) { box.classList.add('hidden'); return; }
+    const hits = getList().filter(p => p.name.toLowerCase().includes(q) || (p.barcode || '').toLowerCase().includes(q)).slice(0, 12);
+    box.innerHTML = hits.map(p => `<div data-id="${esc(p.id)}">${esc(p.name)} <span class="chip">${esc(p.barcode || '—')}</span> <span class="chip">${f3(p.stock)} ${esc(p.unit || '')}</span></div>`).join('') || '<div>لا نتائج</div>';
+    box.classList.remove('hidden');
+    box.querySelectorAll('[data-id]').forEach(d => d.onclick = () => { const p = PRODUCTS.find(x => x.id === d.dataset.id); box.classList.add('hidden'); inp.value = ''; onPick(p, { qty: 1, kind: 'search' }); });
+  };
+  inp.addEventListener('input', show);
+  inp.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return; e.preventDefault();
+    const hit = Barcode.find(getList(), inp.value);
+    if (hit) { inp.value = ''; box.classList.add('hidden'); return onPick(hit.product, hit); }
+    const first = box.querySelector('[data-id]'); if (first) first.click(); else toast('لم يُعثر على المنتج');
+  });
+}
+function camInto(onProduct, list) {
+  Barcode.openScanner({ continuous: false, onCode: (code) => { const h = Barcode.find(list(), code); if (h) onProduct(h.product, h); else toast('باركود غير معروف: ' + code); } });
+}
+
+// ---------- التبويبات ----------
+let TAB = 'stk';
+$('tabs').onclick = (e) => {
+  const b = e.target.closest('button'); if (!b) return; TAB = b.dataset.t;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  ['stk', 'adj', 'trf', 'ro', 'promo', 'lbl'].forEach(t => $('t-' + t).classList.toggle('hidden', t !== TAB));
+  if (TAB === 'adj') loadMovements(); if (TAB === 'trf') loadTransfers(); if (TAB === 'promo') loadPromos(); if (TAB === 'ro' && !$('ro-rows').children.length) loadReorder();
+};
+
+// ================= الجرد =================
+let STK = null;
+async function loadStocktakes() {
+  const r = await api('/inventory/stocktakes'); if (!r.ok) return toast(r.error);
+  $('stk-rows').innerHTML = r.data.map(s => `<tr><td>${esc(s.number)}</td><td>${esc(s.name || '')}</td><td><span class="chip">${s.status === 'open' ? 'مفتوح' : s.status === 'closed' ? 'مُغلق' : 'مُلغى'}</span></td><td>${s.items_count}</td><td>${new Date(s.created_at).toLocaleString('ar-LY')}</td><td><button class="btn sec" data-open="${esc(s.id)}">${s.status === 'open' ? 'متابعة' : 'عرض'}</button></td></tr>`).join('') || '<tr><td colspan="6">لا توجد جلسات</td></tr>';
+  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => openStk(b.dataset.open));
+}
+$('stk-new').onclick = async () => {
+  const r = await api('/inventory/stocktakes', 'POST', { name: $('stk-name').value.trim(), branch_id: IS_ADMIN ? $('stk-branch').value : undefined });
+  if (!r.ok) return toast(r.error); $('stk-name').value = ''; openStk(r.data.id);
+};
+async function openStk(id) {
+  const r = await api('/inventory/stocktakes/' + id); if (!r.ok) return toast(r.error);
+  STK = r.data; renderStk();
+  $('stk-list').classList.add('hidden'); $('stk-work').classList.remove('hidden');
+  if (STK.status === 'open') $('stk-code').focus();
+}
+function renderStk() {
+  const open = STK.status === 'open';
+  $('stk-title').textContent = `${STK.number} ${STK.name ? '— ' + STK.name : ''} ${open ? '' : '(' + (STK.status === 'closed' ? 'مُغلق' : 'مُلغى') + ')'}`;
+  ['stk-code', 'stk-cam', 'stk-search', 'stk-qty', 'stk-set', 'stk-close', 'stk-cancel'].forEach(i => $(i).disabled = !open);
+  $('stk-items').innerHTML = STK.items.map(i => { const v = parseFloat(i.variance); return `<tr><td>${esc(i.name)}</td><td>${f3(i.expected)}</td><td>${f3(i.counted)}</td><td class="${v < 0 ? 'neg' : v > 0 ? 'pos' : ''}">${v > 0 ? '+' : ''}${f3(v)}</td><td class="${v < 0 ? 'neg' : v > 0 ? 'pos' : ''}">${f2(i.variance_value)}</td></tr>`; }).join('') || '<tr><td colspan="5">لم يُعدّ أي صنف بعد</td></tr>';
+  $('k-n').textContent = STK.items.length; $('k-short').textContent = f2(STK.summary.shortage_value); $('k-sur').textContent = f2(STK.summary.surplus_value);
+}
+async function stkCount(body) {
+  const r = await api(`/inventory/stocktakes/${STK.id}/count`, 'POST', body);
+  if (!r.ok) { $('stk-banner').innerHTML = `<b class="neg">${esc(r.error)}</b>`; toast(r.error); return; }
+  $('stk-banner').innerHTML = `<b>${esc(r.data.name)}</b> — المعدود الآن: <b style="font-size:22px">${f3(r.data.counted)}</b> ${esc(r.data.unit || '')} <span class="chip">المتوقع ${f3(r.data.expected)}</span>`;
+  const rr = await api('/inventory/stocktakes/' + STK.id); if (rr.ok) { STK = rr.data; renderStk(); }
+}
+const stkProducts = () => prodsOf(STK && STK.branch_id);
+const stkScan = (code) => { if (STK && STK.status === 'open') stkCount({ code }); };
+$('stk-code').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const c = $('stk-code').value.trim(); $('stk-code').value = ''; if (c) stkScan(c); } });
+$('stk-cam').onclick = () => Barcode.openScanner({ continuous: true, title: 'امسح الأصناف (كل مسحة +1)', onCode: stkScan });
+let stkPicked = null;
+wirePicker('stk-search', 'stk-pick', stkProducts, (p) => { stkPicked = p; $('stk-search').value = p.name; $('stk-qty').focus(); });
+$('stk-set').onclick = () => { if (!stkPicked) return toast('اختر منتجاً'); const q = parseFloat($('stk-qty').value); if (isNaN(q) || q < 0) return toast('أدخل كمية صحيحة'); stkCount({ product_id: stkPicked.id, counted: q }); $('stk-search').value = ''; $('stk-qty').value = ''; stkPicked = null; };
+$('stk-back').onclick = () => { STK = null; $('stk-work').classList.add('hidden'); $('stk-list').classList.remove('hidden'); loadStocktakes(); };
+async function stkClose(apply) {
+  if (!confirm(apply ? `سيتم تعديل المخزون حسب الفروقات (${STK.items.length} صنف). متابعة؟` : 'إلغاء الجلسة دون تعديل المخزون؟')) return;
+  const r = await api(`/inventory/stocktakes/${STK.id}/close`, 'POST', { apply });
+  if (!r.ok) return toast(r.error);
+  toast(apply ? `تم: عُدّل ${r.data.adjusted} صنف — عجز ${f2(r.data.shortage_value)} / زيادة ${f2(r.data.surplus_value)}` : 'أُلغيت الجلسة', 6000);
+  await loadProducts(); openStk(STK.id);
+}
+$('stk-close').onclick = () => stkClose(true); $('stk-cancel').onclick = () => stkClose(false);
+Barcode.attachScannerListener(stkScan, () => TAB === 'stk' && STK && STK.status === 'open');
+
+// ================= التسويات =================
+let ADJ = null;
+$('adj-reason').innerHTML = Object.entries(REASONS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+$('mv-type').innerHTML += Object.entries(TYPE_AR).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+const adjPick = (p) => { ADJ = p; $('adj-sel').innerHTML = `<b>${esc(p.name)}</b> — المخزون الحالي: <b>${f3(p.stock)}</b> ${esc(p.unit || '')}`; $('adj-delta').focus(); };
+wirePicker('adj-search', 'adj-pick', () => prodsOf(ME.role === 'owner' || IS_ADMIN ? null : ME.branch_id), adjPick);
+$('adj-cam').onclick = () => camInto(adjPick, () => prodsOf());
+Barcode.attachScannerListener((c) => { const h = Barcode.find(prodsOf(), c); if (h) adjPick(h.product); }, () => TAB === 'adj');
+$('adj-go').onclick = async () => {
+  if (!ADJ) return toast('اختر منتجاً'); const d = parseFloat($('adj-delta').value); if (!d) return toast('أدخل الفرق (موجب أو سالب)');
+  const r = await api('/inventory/adjust', 'POST', { product_id: ADJ.id, delta: d, reason_code: $('adj-reason').value, notes: $('adj-notes').value.trim() });
+  if (!r.ok) return toast(r.error);
+  toast(`تم: ${f3(r.data.stock_before)} ← ${f3(r.data.stock_after)}`); $('adj-delta').value = ''; $('adj-notes').value = '';
+  await loadProducts(); adjPick(PRODUCTS.find(p => p.id === ADJ.id)); loadMovements();
+};
+async function loadMovements() {
+  const q = new URLSearchParams({ limit: 150 }); if ($('mv-type').value) q.set('type', $('mv-type').value); if ($('mv-from').value) q.set('from', $('mv-from').value); if ($('mv-to').value) q.set('to', $('mv-to').value);
+  const r = await api('/inventory/movements?' + q); if (!r.ok) return toast(r.error);
+  $('mv-rows').innerHTML = r.data.map(m => { const v = parseFloat(m.quantity); return `<tr><td>${new Date(m.created_at).toLocaleString('ar-LY')}</td><td>${esc(m.product_name)}</td><td>${esc(TYPE_AR[m.movement_type] || m.movement_type)}</td><td class="${v < 0 ? 'neg' : 'pos'}">${v > 0 ? '+' : ''}${f3(v)}</td><td>${f3(m.stock_before)}</td><td>${f3(m.stock_after)}</td><td>${esc(m.user_name || '')}</td><td>${esc(m.notes || '')}</td></tr>`; }).join('') || '<tr><td colspan="8">لا حركات</td></tr>';
+}
+$('mv-go').onclick = loadMovements;
+
+// ================= التحويل =================
+let TRF = []; // {product, qty}
+const trfList = () => prodsOf($('trf-from').value).filter(p => parseFloat(p.stock) > 0);
+function trfAdd(p, hit) {
+  const q = hit && hit.qty ? hit.qty : 1; const ex = TRF.find(x => x.product.id === p.id);
+  if (ex) ex.qty += q; else TRF.push({ product: p, qty: q }); renderTrf();
+}
+function renderTrf() {
+  $('trf-items').innerHTML = TRF.map((x, i) => `<tr><td>${esc(x.product.name)}</td><td>${f3(x.product.stock)}</td><td><input type="number" min="0.001" step="any" value="${x.qty}" data-i="${i}" style="width:110px"></td><td><button class="btn sec" data-rm="${i}">حذف</button></td></tr>`).join('') || '<tr><td colspan="4">لم تُضَف أصناف</td></tr>';
+  document.querySelectorAll('#trf-items input').forEach(i => i.onchange = () => { TRF[+i.dataset.i].qty = parseFloat(i.value) || 0; });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { TRF.splice(+b.dataset.rm, 1); renderTrf(); });
+}
+wirePicker('trf-search', 'trf-pick', trfList, trfAdd);
+$('trf-cam').onclick = () => Barcode.openScanner({ continuous: true, title: 'امسح أصناف التحويل', onCode: (c) => { const h = Barcode.find(trfList(), c); if (h) trfAdd(h.product, h); else toast('غير موجود في هذا الفرع/لا مخزون: ' + c); } });
+Barcode.attachScannerListener((c) => { const h = Barcode.find(trfList(), c); if (h) trfAdd(h.product, h); else toast('غير موجود في هذا الفرع/لا مخزون'); }, () => TAB === 'trf');
+$('trf-from').onchange = () => { TRF = []; renderTrf(); };
+$('trf-go').onclick = async () => {
+  if (!TRF.length) return toast('أضف أصنافاً'); if ($('trf-from').value === $('trf-to').value) return toast('اختر فرعين مختلفين');
+  if (TRF.some(x => !(x.qty > 0))) return toast('كمية غير صالحة');
+  if (!confirm(`تحويل ${TRF.length} صنف إلى «${$('trf-to').selectedOptions[0].text}»؟`)) return;
+  const r = await api('/inventory/transfers', 'POST', { from_branch_id: $('trf-from').value, to_branch_id: $('trf-to').value, notes: $('trf-notes').value.trim(), items: TRF.map(x => ({ product_id: x.product.id, quantity: x.qty })) });
+  if (!r.ok) return toast(r.error, 6000);
+  toast('تم التحويل ' + r.data.number); TRF = []; renderTrf(); $('trf-notes').value = ''; await loadProducts(); loadTransfers();
+};
+async function loadTransfers() {
+  const r = await api('/inventory/transfers'); if (!r.ok) return;
+  $('trf-rows').innerHTML = r.data.map(t => `<tr><td>${esc(t.number)}</td><td>${esc(t.from_branch)}</td><td>${esc(t.to_branch)}</td><td>${t.items_count}</td><td>${f2(t.total_cost)}</td><td>${new Date(t.created_at).toLocaleString('ar-LY')}</td></tr>`).join('') || '<tr><td colspan="6">لا تحويلات</td></tr>';
+}
+
+// ================= إعادة الطلب =================
+let RO = [];
+async function loadReorder() {
+  const r = await api(`/inventory/reorder?days=${$('ro-days').value}&cover=${$('ro-cover').value}`); if (!r.ok) return toast(r.error);
+  RO = r.data; $('ro-n').textContent = RO.length; $('ro-cost').textContent = f2(r.total_est_cost);
+  $('ro-rows').innerHTML = RO.map(x => `<tr><td>${esc(x.name)}</td><td>${f3(x.stock)}</td><td>${x.avg_daily}</td><td class="${x.days_left !== null && x.days_left < 3 ? 'neg' : ''}">${x.days_left === null ? '—' : x.days_left}</td><td><b>${x.suggested_qty}</b> ${esc(x.unit || '')}</td><td>${f2(x.est_cost)}</td><td>${esc(x.supplier_name || '—')}</td></tr>`).join('') || '<tr><td colspan="7">لا توجد أصناف تحتاج إعادة طلب </td></tr>';
+}
+$('ro-go').onclick = loadReorder;
+$('ro-csv').onclick = async () => {
+  if (!RO.length) return toast('لا بيانات');
+  const q = (v) => { let s = String(v ?? ''); if (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+  const rows = [['المنتج', 'الباركود', 'المخزون', 'المعدل اليومي', 'يكفي (يوم)', 'الكمية المقترحة', 'التكلفة التقديرية', 'آخر مورّد']].concat(RO.map(x => [x.name, x.barcode, x.stock, x.avg_daily, x.days_left ?? '', x.suggested_qty, x.est_cost, x.supplier_name || '']));
+  await window.saveBlob(new Blob(['﻿' + rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }), 'reorder-' + new Date().toISOString().slice(0, 10) + '.csv');
+};
+
+// ================= الملصقات =================
+let LBL = []; // products
+const missingBc = () => PRODUCTS.filter(p => !p.barcode && !p.sold_by_weight && !p.is_service);
+function renderLabels() {
+  const [w, h] = $('lb-size').value.split('x').map(Number), copies = Math.max(1, Math.min(200, parseInt($('lb-copies').value) || 1)), showPrice = $('lb-price').checked;
+  const one = (p) => {
+    const svg = p.barcode ? Barcode.svgBarcode(p.barcode, { module: 1, height: Math.round(h * 1.1), fontSize: 9 }) : null;
+    return `<div class="label" style="width:${w}mm;height:${h}mm"><div class="n">${esc(p.name)}</div>${svg || `<div style="font-size:10px">${esc(p.barcode || '— بلا باركود —')}</div>`}${showPrice ? `<div class="p">${f2(p.sell_price)}</div>` : ''}</div>`;
+  };
+  const html = LBL.map(p => Array(copies).fill(one(p)).join('')).join('');
+  $('labels-preview').innerHTML = html || '<div class="sub">أضف منتجات لتظهر الملصقات</div>';
+  $('print-area').innerHTML = html;
+  const bad = LBL.filter(p => !p.barcode || !Barcode.svgBarcode(p.barcode, {})).length;
+  $('lb-count').textContent = `${LBL.length} منتج × ${copies} = ${LBL.length * copies} ملصق` + (bad ? ` — ${bad} منتج بلا باركود أو بباركود لا يمكن رسمه` : '') + ` — المنتجات بلا باركود في المتجر: ${missingBc().length}`;
+  let st = document.getElementById('page-style'); if (!st) { st = document.createElement('style'); st.id = 'page-style'; document.head.appendChild(st); }
+  st.textContent = `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
+}
+wirePicker('lb-search', 'lb-pick', () => PRODUCTS.filter(p => !p.is_service), (p) => { if (!LBL.find(x => x.id === p.id)) LBL.push(p); renderLabels(); });
+['lb-size', 'lb-copies', 'lb-price'].forEach(i => $(i).onchange = renderLabels);
+$('lb-all').onclick = () => { LBL = PRODUCTS.filter(p => !p.is_service); renderLabels(); };
+$('lb-clear').onclick = () => { LBL = []; renderLabels(); };
+$('lb-gen').onclick = async () => {
+  const n = missingBc().length; if (!n) return toast('كل المنتجات لديها باركود');
+  if (!confirm(`سيُولَّد باركود داخلي لـ ${n} منتج بلا باركود. متابعة؟`)) return;
+  const r = await api('/inventory/barcodes/generate', 'POST', {}); if (!r.ok) return toast(r.error);
+  toast(`تم توليد ${r.data.count} باركود`); await loadProducts(); renderLabels();
+};
+$('lb-print').onclick = () => { if (!LBL.length) return toast('لا ملصقات'); renderLabels(); window.print(); };
+
+// ---------- العروض ----------
+const PR_ROLES = ['owner', 'tenant_admin', 'branch_manager'];
+function fmtD(v) { return v ? new Date(v).toLocaleString('ar-LY', { dateStyle: 'short', timeStyle: 'short' }) : '—'; }
+function fillPromoProducts() { $('pr-prod').innerHTML = PRODUCTS.filter(p => !p.is_service).map(p => `<option value="${esc(p.id)}">${esc(p.name)} — ${f2(p.sell_price)}</option>`).join(''); }
+$('pr-target').onchange = () => { const c = $('pr-target').value === 'category'; $('pr-prod-f').classList.toggle('hidden', c); $('pr-cat-f').classList.toggle('hidden', !c); };
+async function loadPromos() {
+  fillPromoProducts();
+  const r = await api('/promotions');
+  if (!r.ok) return toast(r.error || 'تعذر تحميل العروض');
+  const can = PR_ROLES.includes(ME.role);
+  $('pr-add').closest('.card').classList.toggle('hidden', !can);
+  $('pr-rows').innerHTML = r.data.map(x => `<tr>
+    <td>${esc(x.name)}</td><td>${esc(x.product_name || ('تصنيف: ' + x.category))}${x.branch_name ? ' · ' + esc(x.branch_name) : ''}</td>
+    <td>${x.kind === 'percent' ? f2(x.value) + '%' : 'سعر ' + f2(x.value)}</td>
+    <td>${fmtD(x.starts_at)} ← ${fmtD(x.ends_at)}</td>
+    <td><span class="chip ${x.running ? 'pos' : ''}">${x.running ? 'فعّال' : (x.is_active ? 'غير ضمن المدة' : 'موقوف')}</span></td>
+    <td>${can ? `<button class="btn sec" data-pt="${esc(x.id)}" data-on="${x.is_active ? 1 : 0}">${x.is_active ? 'إيقاف' : 'تفعيل'}</button> <button class="btn bad" data-pd="${esc(x.id)}">حذف</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted)">لا توجد عروض</td></tr>';
+}
+$('pr-rows').onclick = async (e) => {
+  const t = e.target.closest('button'); if (!t) return;
+  let r;
+  if (t.dataset.pt) r = await api('/promotions/' + t.dataset.pt, 'PUT', { is_active: t.dataset.on !== '1' });
+  else if (t.dataset.pd) { if (!confirm('حذف العرض نهائياً؟')) return; r = await api('/promotions/' + t.dataset.pd, 'DELETE'); }
+  else return;
+  if (!r.ok) return toast(r.error || 'فشلت العملية');
+  loadPromos();
+};
+$('pr-add').onclick = async () => {
+  const cat = $('pr-target').value === 'category';
+  const body = { name: $('pr-name').value.trim(), kind: $('pr-kind').value, value: parseFloat($('pr-val').value),
+    ...(cat ? { category: $('pr-cat').value.trim() } : { product_id: $('pr-prod').value }),
+    starts_at: $('pr-from').value ? new Date($('pr-from').value).toISOString() : undefined,
+    ends_at: $('pr-to').value ? new Date($('pr-to').value).toISOString() : undefined };
+  const r = await api('/promotions', 'POST', body);
+  if (!r.ok) return toast(r.error || 'تعذرت الإضافة');
+  toast('تمت إضافة العرض'); $('pr-name').value = ''; $('pr-val').value = ''; loadPromos();
+};
+
+(async () => { await Promise.all([loadProducts(), loadBranches()]); loadPromos(); loadStocktakes(); renderTrf(); renderLabels(); })();
+</script>
+</body>
+</html>
