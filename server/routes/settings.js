@@ -15,8 +15,25 @@ const SCHEMA = {
   loyalty_redeem_value:       { def: '0.1',   parse: v => String(num(v, { name: 'قيمة النقطة', min: 0.001, max: 1000 })) },
   cashier_max_discount_percent: { def: '10',  parse: v => String(num(v, { name: 'حد خصم الكاشير', min: 0, max: 100 })) },
   require_shift:              { def: 'false', parse: v => String(truthy(v)) },
-  print_footer:               { def: 'شكراً لزيارتكم', parse: v => String(v).slice(0, 200) }
+  print_footer:               { def: 'شكراً لزيارتكم', parse: v => String(v).slice(0, 200) },
+  // هوية المتجر: لون رئيسي، شعار (صورة صغيرة مضغوطة)، سطر ترويسة للفاتورة
+  brand_color:                { def: '', parse: v => { v = String(v || '').trim(); if (v && !/^#[0-9a-fA-F]{6}$/.test(v)) throw new HttpError(400, 'اللون غير صالح'); return v.toLowerCase(); } },
+  brand_logo:                 { def: '', parse: v => { v = String(v || ''); if (v && (v.length > 150000 || !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v))) throw new HttpError(400, 'الشعار غير صالح (png/jpg/webp وحجم صغير)'); return v; } },
+  receipt_header:             { def: '', parse: v => String(v || '').slice(0, 200) }
 };
+
+// هوية المتجر لكل المستخدمين (تُطبَّق على الشاشة والفاتورة)
+router.get('/brand', async (req, res, next) => {
+  try {
+    const cur = await getSettings({ query }, req.tenantId);
+    const t = await query('SELECT business_name, address, owner_phone FROM tenants WHERE id = $1', [req.tenantId]);
+    const r = t.rows[0] || {};
+    res.json({ ok: true, data: {
+      name: r.business_name || '', address: r.address || '', phone: r.owner_phone || '',
+      color: cur.brand_color || '', logo: cur.brand_logo || '', header: cur.receipt_header || '',
+      footer: cur.print_footer !== undefined ? cur.print_footer : 'شكراً لزيارتكم' } });
+  } catch (e) { next(e); }
+});
 
 router.get('/', async (req, res, next) => {
   try {

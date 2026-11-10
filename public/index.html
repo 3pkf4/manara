@@ -107,7 +107,7 @@ input:focus, select:focus, textarea:focus { outline: none; }
 #app-view { display: none; width: 100%; height: 100%; }
 
 /* ============ Sidebar ============ */
-#sidebar { width: var(--sidebar-width); background: var(--gray-950);
+#sidebar { width: var(--sidebar-width); background: var(--brand, var(--gray-950));
   color: var(--white); display: flex; flex-direction: column; z-index: 100;
   border-left: 1px solid var(--gray-800); flex-shrink: 0;
   padding-top: var(--safe-top); }
@@ -399,8 +399,9 @@ header { background: var(--surface); padding: 0 16px;
   font-size: 13px; font-weight: 600; display: inline-flex;
   align-items: center; gap: 6px; min-height: 38px;
   transition: var(--transition); border: 1px solid transparent; }
-.btn-primary { background: var(--gray-900); color: var(--white); }
-.btn-primary:hover { background: #000; }
+.btn-primary { background: var(--brand, var(--gray-900)); color: var(--white); }
+.btn-primary:hover { background: var(--brand, #000); filter: brightness(.9); }
+.sidebar-logo img.custom { width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius); }
 .btn-outline { background: var(--surface); color: var(--gray-700);
   border-color: var(--border-strong); }
 .btn-outline:hover { background: var(--gray-50);
@@ -744,22 +745,25 @@ header { background: var(--surface); padding: 0 16px;
 <script src="/js/offline.js"></script>
 <script src="/js/barcode.js"></script>
 <script src="/js/qrcode.min.js"></script>
+<link rel="stylesheet" href="/css/ui.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="/js/icons.js"></script>
 </head>
 <body>
 
 <!-- نظام التراخيص والعداد والنافذة المقفلة -->
-<div id="manara-sub-timer" style="position: fixed; bottom: 20px; left: 20px; background: #1e293b; color: #f8fafc; padding: 10px 15px; border-radius: 8px; font-family: sans-serif; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; display: flex; align-items: center; direction: rtl; border: 1px solid #334155; user-select: none;">
-  <span style="margin-left: 8px; font-size: 16px;">⏳</span>
+<div id="manara-sub-timer" onclick="this.classList.toggle('open')" style="position: fixed; bottom: 20px; left: 20px; background: #1e293b; color: #f8fafc; padding: 10px 15px; border-radius: 8px; font-family: sans-serif; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 99999; display: flex; align-items: center; direction: rtl; border: 1px solid #334155; user-select: none;">
+  <span style="margin-left: 8px; font-size: 16px;"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg></span>
   الاشتراك: <strong id="manara-sub-text" style="margin-right: 5px;">جاري التحقق...</strong>
 </div>
 
 <div id="subscriptionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 999999; justify-content: center; align-items: center; direction: rtl; font-family: sans-serif; backdrop-filter: blur(5px);">
   <div style="background: #1e293b; padding: 40px; border-radius: 12px; width: 400px; max-width: 90%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); border: 1px solid #334155;">
-    <h2 style="color: #f8fafc; margin-top: 0; font-size: 24px;">🔒 المنظومة مقفلة</h2>
+    <h2 style="color: #f8fafc; margin-top: 0; font-size: 24px;"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lock"/></svg> المنظومة مقفلة</h2>
     <p style="color: #94a3b8; margin-bottom: 25px; line-height: 1.5;">عفواً، انتهت صلاحية اشتراكك. يرجى إدخال كود التجديد للاستمرار.</p>
     <input type="text" id="sub-code-input" placeholder="أدخل كود التفعيل هنا..." style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #f8fafc; text-align: center; font-size: 18px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;" autocomplete="off">
-    <button onclick="submitSubscriptionCode()" style="background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.3s;">تفعيل المنظومة 🚀</button>
-    <a id="sub-wa" href="https://wa.me/218922227299?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%AD%D8%B5%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D9%83%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%84%D9%84%D9%85%D9%86%D8%A7%D8%B1%D8%A9" target="_blank" rel="noopener" style="display:block;margin-top:12px;background:#25d366;color:#fff;padding:12px;border-radius:6px;font-size:15px;font-weight:bold;text-decoration:none">💬 احصل على كود التفعيل عبر واتساب</a>
+    <button onclick="submitSubscriptionCode()" style="background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.3s;">تفعيل المنظومة </button>
+    <a id="sub-wa" href="https://wa.me/218922227299?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%AD%D8%B5%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D9%83%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%84%D9%84%D9%85%D9%86%D8%A7%D8%B1%D8%A9" target="_blank" rel="noopener" style="display:block;margin-top:12px;background:#25d366;color:#fff;padding:12px;border-radius:6px;font-size:15px;font-weight:bold;text-decoration:none"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-message"/></svg> احصل على كود التفعيل عبر واتساب</a>
     <div id="sub-pay" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid #334155">
       <p style="color:#94a3b8;margin:0 0 10px;font-size:14px">أو جدّد بالدفع الإلكتروني (MyPay):</p>
       <input type="text" id="sub-pay-tenant" placeholder="رمز المتجر (إن طُلب)" style="display:none;width:100%;padding:10px;margin-bottom:10px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;text-align:center;direction:ltr;box-sizing:border-box">
@@ -771,7 +775,7 @@ header { background: var(--surface); padding: 0 16px;
 
 <script>
 // ============================================
-// 🛡️ العداد المحصّن (ضد التلاعب + يعمل offline)
+// <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-shield"/></svg> العداد المحصّن (ضد التلاعب + يعمل offline)
 // ============================================
 
 const LICENSE_CACHE_KEY = 'manara_license_cache_v2';
@@ -829,7 +833,7 @@ function detectClockTampering() {
     const lastCheck = parseInt(localStorage.getItem(LICENSE_CLOCK_KEY) || '0');
     const now = Date.now();
     if (lastCheck > 0 && now < lastCheck - 60000) {
-      console.warn('⚠️ تم اكتشاف تلاعب بساعة الجهاز!');
+      console.warn(' تم اكتشاف تلاعب بساعة الجهاز!');
       return true;
     }
     localStorage.setItem(LICENSE_CLOCK_KEY, now.toString());
@@ -899,13 +903,13 @@ window.checkSubscriptionStatus = async function() {
       }
     }
   } catch(e) {
-    console.log('⚠️ مفيش اتصال — نستخدم الكاش');
+    console.log(' مفيش اتصال — نستخدم الكاش');
   }
 
   if (!cache && !data) {
-    text.innerText = '⚠️ غير متصل';
+    text.innerText = ' غير متصل';
     badge.style.display = 'flex';
-    badge.style.background = '#6b7280';
+    badge.style.setProperty('--c','#9aa6bb');
     return;
   }
 
@@ -922,8 +926,7 @@ window.checkSubscriptionStatus = async function() {
 
       if (diff <= 0) {
         badge.style.display = 'flex';
-        badge.style.background = '#ef4444';
-        badge.style.borderColor = '#b91c1c';
+        badge.style.setProperty('--c','#c0392b');
         text.innerText = 'منتهي الصلاحية!';
         if (modal) { modal.style.display = 'flex'; loadPayPlans(); }
         clearInterval(window._manaraCountdownInterval);
@@ -942,24 +945,23 @@ window.checkSubscriptionStatus = async function() {
 
       let icon = '', color = '', borderColor = '';
       if (tampered) {
-        icon = '⚠️ '; color = '#dc2626'; borderColor = '#991b1b';
+        icon = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> '; color = '#dc2626'; borderColor = '#991b1b';
       } else if (!online) {
-        icon = '📴 '; color = '#6b7280'; borderColor = '#4b5563';
+        icon = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wifi-off"/></svg> '; color = '#6b7280'; borderColor = '#4b5563';
       } else if (days > 3) {
-        icon = '✅ '; color = '#10b981'; borderColor = '#059669';
+        icon = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg> '; color = '#1c9c6b'; borderColor = '';
       } else if (days > 0) {
-        icon = '⏰ '; color = '#f59e0b'; borderColor = '#d97706';
+        icon = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg> '; color = '#f59e0b'; borderColor = '#d97706';
       } else {
-        icon = '🔥 '; color = '#f97316'; borderColor = '#ea580c';
+        icon = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-flame"/></svg> '; color = '#f97316'; borderColor = '#ea580c';
       }
 
-      badge.style.background = color;
-      badge.style.borderColor = borderColor;
+      badge.style.setProperty('--c', color);
 
       if (days > 0) {
-        text.innerText = icon + days + ' يوم و ' + hh + ':' + mm + ':' + ss;
+        text.innerHTML = icon + days + ' يوم و ' + hh + ':' + mm + ':' + ss;
       } else {
-        text.innerText = icon + hh + ':' + mm + ':' + ss;
+        text.innerHTML = icon + hh + ':' + mm + ':' + ss;
       }
     }
 
@@ -985,7 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================
-// 🚀 دالة تفعيل الاشتراك (submitSubscriptionCode)
+//  دالة تفعيل الاشتراك (submitSubscriptionCode)
 // ============================================
 
 window.submitSubscriptionCode = async function() {
@@ -997,11 +999,11 @@ window.submitSubscriptionCode = async function() {
   const code = input.value.trim().toUpperCase();
   
   if (!code) {
-    resultDiv.innerHTML = '<span style="color:#ef4444">⚠️ يرجى إدخال الكود!</span>';
+    resultDiv.innerHTML = '<span style="color:#ef4444"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> يرجى إدخال الكود!</span>';
     return;
   }
   
-  resultDiv.innerHTML = '<span style="color:#f59e0b">⏳ جاري الاتصال بالسيرفر...</span>';
+  resultDiv.innerHTML = '<span style="color:#f59e0b"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg> جاري الاتصال بالسيرفر...</span>';
   
   let deviceId = localStorage.getItem('manara_device_id');
   if (!deviceId || deviceId === 'unknown') {
@@ -1019,13 +1021,13 @@ window.submitSubscriptionCode = async function() {
     const data = await res.json();
     
     if (res.ok && data.success) {
-      resultDiv.innerHTML = '<span style="color:#10b981">✅ ' + (data.message || 'تم التفعيل بنجاح!') + '</span>';
+      resultDiv.innerHTML = '<span style="color:#10b981"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg> ' + (data.message || 'تم التفعيل بنجاح!') + '</span>';
       setTimeout(() => window.location.reload(), 1500);
     } else {
-      resultDiv.innerHTML = '<span style="color:#ef4444">❌ ' + (data.error || 'فشل التفعيل') + '</span>';
+      resultDiv.innerHTML = '<span style="color:#ef4444"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg> ' + (data.error || 'فشل التفعيل') + '</span>';
     }
   } catch(e) {
-    resultDiv.innerHTML = '<span style="color:#ef4444">❌ خطأ في الاتصال بالسيرفر</span>';
+    resultDiv.innerHTML = '<span style="color:#ef4444"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg> خطأ في الاتصال بالسيرفر</span>';
     console.error('Activation error:', e);
   }
 };
@@ -1036,7 +1038,7 @@ window.submitSubscriptionCode = async function() {
 <!-- ============ شاشة تسجيل الدخول ============ -->
 <div id="login-view">
   <div class="login-box">
-    <div class="login-logo"><img class="brand-logo" src="/icons/logo.svg" alt="المنارة"></div>
+    <div class="login-logo"><img src="/img/logo-full.png" alt="المنارة - AL-MANARA"></div>
     <h1>المنارة</h1>
     <p class="subtitle">POS & ERP System</p>
     <form id="login-form" onsubmit="event.preventDefault(); login();">
@@ -1077,7 +1079,7 @@ window.submitSubscriptionCode = async function() {
   <!-- Sidebar -->
   <aside id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo"><img class="brand-logo" src="/icons/logo.svg" alt="المنارة"></div>
+      <div class="sidebar-logo"><img src="/img/logo-mark-light.png" alt="المنارة"></div>
       <div>
         <div class="sidebar-title" id="sidebar-business-name">المنارة</div>
         <div class="sidebar-subtitle" id="sidebar-tenant-code">POS & ERP</div>
@@ -1225,7 +1227,7 @@ window.submitSubscriptionCode = async function() {
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <button type="button" class="theme-btn" onclick="openPOSScanner()" title="مسح بكاميرا الهاتف" aria-label="مسح بالكاميرا" style="position:absolute;inset-inline-end:92px;top:50%;transform:translateY(-50%);z-index:2">📷</button>
+            <button type="button" class="theme-btn" onclick="openPOSScanner()" title="مسح بكاميرا الهاتف" aria-label="مسح بالكاميرا" style="position:absolute;inset-inline-end:92px;top:50%;transform:translateY(-50%);z-index:2"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button>
             <input type="text" class="search-bar" id="pos-search"
                    placeholder="ابحث بالاسم أو الباركود..." autocomplete="off">
             <div class="search-hint">
@@ -1780,7 +1782,7 @@ window.submitSubscriptionCode = async function() {
       </div>
       <div style="background: var(--warn-bg); color: #92400e; padding: 12px; border-radius: 8px;
                   font-size: 12px; line-height: 1.6; margin-top: 12px;">
-        ⚠️ <strong>مهم:</strong> بعد تسجيل هذا الجهاز، لن يتمكن أي مستخدم من فرع آخر من الدخول منه.
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> <strong>مهم:</strong> بعد تسجيل هذا الجهاز، لن يتمكن أي مستخدم من فرع آخر من الدخول منه.
       </div>
     </div>
     <div class="modal-footer">
@@ -1875,7 +1877,7 @@ window.submitSubscriptionCode = async function() {
 <!-- Modal: مستخدم -->
 <div class="modal-overlay" id="qr-user-modal">
   <div class="modal" style="max-width:380px">
-    <div class="modal-header"><h3 id="qr-user-title">دخول بالـ QR</h3><button class="modal-close" onclick="closeQrUser()">✕</button></div>
+    <div class="modal-header"><h3 id="qr-user-title">دخول بالـ QR</h3><button class="modal-close" onclick="closeQrUser()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></div>
     <div class="modal-body" style="text-align:center">
       <div id="qr-user-img" style="display:inline-block;background:#fff;padding:12px;border-radius:12px"></div>
       <p style="margin:10px 0 2px;font-size:14px">امسحه بكاميرا هاتف الكاشير</p>
@@ -1949,7 +1951,7 @@ window.submitSubscriptionCode = async function() {
       </div>
 
       <p style="font-size:11px;color:var(--text-secondary);margin-top:8px;line-height:1.6;">
-        💡 <strong>ملاحظة:</strong> الكاشير يرى فقط بيانات فرعه.
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bulb"/></svg> <strong>ملاحظة:</strong> الكاشير يرى فقط بيانات فرعه.
         المدير العام يرى كل الفروع.
       </p>
     </div>
@@ -2164,8 +2166,8 @@ window.submitSubscriptionCode = async function() {
           <div style="display:flex;gap:6px">
             <input type="text" id="p_barcode" data-scan-target="1" autocomplete="off" style="flex:1"
                    onkeydown="if(event.key==='Enter'){event.preventDefault();}">
-            <button type="button" class="btn btn-outline" onclick="scanInto('p_barcode')" title="مسح بكاميرا الهاتف">📷</button>
-            <button type="button" class="btn btn-outline" onclick="genBarcodeInto('p_barcode')" title="توليد باركود داخلي للمنتج">🏷️</button>
+            <button type="button" class="btn btn-outline" onclick="scanInto('p_barcode')" title="مسح بكاميرا الهاتف" aria-label="مسح بالكاميرا"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button>
+            <button type="button" class="btn btn-outline" onclick="genBarcodeInto('p_barcode')" title="توليد باركود داخلي للمنتج" aria-label="توليد باركود"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tag"/></svg></button>
           </div>
         </div>
         <div class="form-group">
@@ -2189,7 +2191,7 @@ window.submitSubscriptionCode = async function() {
           <input type="text" id="p_extra_code" placeholder="باركود الكرتونة" data-scan-target="1" autocomplete="off" style="flex:1"
                  onkeydown="if(event.key==='Enter'){event.preventDefault();addExtraBarcode();}">
           <input type="number" id="p_extra_qty" value="12" min="0.001" step="any" style="width:90px" title="عدد الحبات في العبوة">
-          <button type="button" class="btn btn-outline" onclick="scanInto('p_extra_code')">📷</button>
+          <button type="button" class="btn btn-outline" onclick="scanInto('p_extra_code')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button>
           <button type="button" class="btn btn-outline" onclick="addExtraBarcode()">إضافة</button>
         </div>
       </div>
@@ -2323,7 +2325,9 @@ function showToast(msg, type = 'info', duration = 2500) {
   const container = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = 'toast ' + type;
-  t.textContent = msg;
+  const icon = { success: 'check-circle', error: 'x', warn: 'alert', warning: 'alert' }[type] || 'info';
+  t.innerHTML = (window.ic ? ic(icon) : '') + '<span></span>';
+  t.lastChild.textContent = msg;
   container.appendChild(t);
   setTimeout(() => {
     t.classList.add('hide');
@@ -2518,8 +2522,24 @@ async function login() {
 }
 
 
+async function loadBrand() {
+  try {
+    const r = await api('/settings/brand');
+    if (!r.ok) return;
+    APP.brand = r.data;
+    const root = document.documentElement.style;
+    if (/^#[0-9a-f]{6}$/.test(r.data.color || '')) root.setProperty('--brand', r.data.color); else root.removeProperty('--brand');
+    const img = document.querySelector('#sidebar .sidebar-logo img');
+    if (img) {
+      if (/^data:image\/(png|jpeg|webp);base64,/.test(r.data.logo || '')) { img.src = r.data.logo; img.classList.add('custom'); }
+      else { img.src = '/icons/logo.svg'; img.classList.remove('custom'); }
+    }
+  } catch (e) {}
+}
+
 function onLoginSuccess() {
   const u = APP.user;
+  loadBrand();
   document.getElementById('current-user').textContent = u.name;
   document.getElementById('user-avatar').textContent = (u.name || '?').charAt(0);
   document.getElementById('sidebar-business-name').textContent = u.tenant_name || 'المنارة';
@@ -2710,7 +2730,7 @@ function renderPOSGrid(arr) {
           </svg>
         </div>
         <div class="product-name">${esc(p.name)}</div>
-        <div class="product-price">${p.promo_price != null ? `<s style="color:var(--gray-500);font-weight:500;font-size:11px">${parseFloat(p.sell_price).toFixed(2)}</s> <span style="color:var(--danger,#c0392b)" title="${esc(p.promo_name || '')}">${parseFloat(p.promo_price).toFixed(2)} 🏷</span>` : parseFloat(p.sell_price).toFixed(2)}</div>
+        <div class="product-price">${p.promo_price != null ? `<s style="color:var(--gray-500);font-weight:500;font-size:11px">${parseFloat(p.sell_price).toFixed(2)}</s> <span style="color:var(--danger,#c0392b)" title="${esc(p.promo_name || '')}">${parseFloat(p.promo_price).toFixed(2)} </span>` : parseFloat(p.sell_price).toFixed(2)}</div>
       </div>
     `;
   }).join('');
@@ -3662,9 +3682,11 @@ async function viewInvoice(id) {
 
   const html = `
     <div style="padding: 20px;">
+      ${(APP.brand && /^data:image\/(png|jpeg|webp);base64,/.test(APP.brand.logo || '')) ? `<div style="text-align:center;margin-bottom:6px"><img src="${APP.brand.logo}" alt="" style="max-height:64px;max-width:160px"></div>` : ''}
       <h2 style="text-align: center; margin-bottom: 8px;">${esc(inv.business_name || 'المنارة')}</h2>
+      ${APP.brand && APP.brand.header ? `<p style="text-align:center;font-size:13px">${esc(APP.brand.header)}</p>` : ''}
       <p style="text-align: center; font-size: 12px; color: var(--text-secondary);">
-        ${inv.tenant_address || ''} | ${inv.tenant_phone || ''}
+        ${esc(inv.tenant_address || '')} | ${esc(inv.tenant_phone || '')}
       </p>
       <hr style="margin: 12px 0;">
       <p><strong>رقم الفاتورة:</strong> ${inv.invoice_number}</p>
@@ -3700,9 +3722,10 @@ async function viewInvoice(id) {
             <strong>${parseFloat(inv.remaining).toFixed(2)} د.ل</strong>
           </div>` : ''}
       </div>
+      ${APP.brand && APP.brand.footer ? `<p style="margin-top:12px;text-align:center;font-size:13px">${esc(APP.brand.footer)}</p>` : ''}
       <div style="margin-top: 16px; text-align: center;">
         <button class="btn btn-primary" onclick="printInvoice('${inv.id}')">
-          🖨️ طباعة
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg> طباعة
         </button>
       </div>
     </div>
@@ -4111,7 +4134,7 @@ async function qrLoginFromHash() {
       localStorage.setItem('manara_token', data.token);
       localStorage.setItem('manara_user', JSON.stringify(data.user));
       onLoginSuccess();
-      showToast('تم تسجيل دخول هذا الجهاز ✅', 'success');
+      showToast('تم تسجيل دخول هذا الجهاز ', 'success');
       return true;
     }
     err.textContent = (data.error || 'تعذر الدخول بالـ QR') + ' — اطلب من المدير رمزاً جديداً.';
@@ -4190,8 +4213,8 @@ async function loadBranches() {
         ${esc(b.address || 'بدون عنوان')}
       </div>
       <div style="display:flex;gap:14px;font-size:11px;color:var(--text-secondary);margin-bottom:12px;">
-        <span>👥 ${b.user_count} مستخدم</span>
-        <span>🧾 ${b.invoice_count} فاتورة</span>
+        <span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg> ${b.user_count} مستخدم</span>
+        <span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-receipt"/></svg> ${b.invoice_count} فاتورة</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:1px solid var(--border);">
         <div>
@@ -4308,7 +4331,7 @@ async function viewBranchDetail(id) {
     </div>
 
     <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
-      📋 معلومات الفرع
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clipboard"/></svg> معلومات الفرع
     </h4>
     <table class="data-table" style="min-width:auto;margin-bottom:20px;">
       <tr><td style="width:150px;"><strong>الكود</strong></td><td>${esc(b.branch_code)}</td></tr>
@@ -4320,7 +4343,7 @@ async function viewBranchDetail(id) {
     </table>
 
     <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
-      👥 المستخدمون (${branchUsers.length})
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg> المستخدمون (${branchUsers.length})
     </h4>
     <table class="data-table" style="min-width:auto;">
       <thead><tr><th>الاسم</th><th>المستخدم</th><th>الدور</th></tr></thead>
@@ -4408,12 +4431,12 @@ function renderUsersTable() {
   }
 
   const roleLabels = {
-    owner: '👑 مالك المنظومة',
-    tenant_admin: '🔑 مدير عام',
-    branch_manager: '🏪 مدير فرع',
-    cashier: '💳 كاشير',
-    warehouse: '📦 مخزنجي',
-    accountant: '💰 محاسب'
+    owner: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-crown"/></svg> مالك المنظومة',
+    tenant_admin: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> مدير عام',
+    branch_manager: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> مدير فرع',
+    cashier: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> كاشير',
+    warehouse: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-box"/></svg> مخزنجي',
+    accountant: '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wallet"/></svg> محاسب'
   };
 
   const roleColors = {
@@ -4451,7 +4474,7 @@ function renderUsersTable() {
       </td>
       <td>
         <div class="actions">
-          ${(u.is_active && ['cashier', 'warehouse'].includes(u.role)) ? `<button class="btn-icon-sm info" onclick="showUserQr('${u.id}')" title="دخول بالـ QR">▦</button>` : ''}
+          ${(u.is_active && ['cashier', 'warehouse'].includes(u.role)) ? `<button class="btn-icon-sm info" onclick="showUserQr('${u.id}')" title="دخول بالـ QR"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-qr"/></svg></button>` : ''}
           <button class="btn-icon-sm" onclick="openUserModal('${u.id}')" title="تعديل">
             <svg class="icon icon-xs" viewBox="0 0 24 24">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -4626,11 +4649,11 @@ async function loadDevices() {
   const isRegistered = res.data.find(d => d.device_id === myDeviceId);
   const statusEl = document.getElementById('current-device-status');
   if (isRegistered) {
-    statusEl.innerHTML = `✅ <span style="color: #4ade80;">مسجل</span> - ${esc(isRegistered.branch_name)}`;
+    statusEl.innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg> <span style="color: #4ade80;">مسجل</span> - ${esc(isRegistered.branch_name)}`;
   } else if (['owner', 'tenant_admin'].includes(APP.user.role)) {
-    statusEl.innerHTML = `👑 <span style="color: #fbbf24;">مدير (لا يحتاج تسجيل)</span>`;
+    statusEl.innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-crown"/></svg> <span style="color: #fbbf24;">مدير (لا يحتاج تسجيل)</span>`;
   } else {
-    statusEl.innerHTML = `⚠️ <span style="color: #fbbf24;">غير مسجل</span>`;
+    statusEl.innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> <span style="color: #fbbf24;">غير مسجل</span>`;
   }
 
   const tbody = document.getElementById('devices-table');
@@ -4733,7 +4756,7 @@ async function registerDevice() {
   btn.textContent = 'تسجيل الجهاز';
 
   if (res.ok) {
-    showToast(`✅ تم تسجيل الجهاز في "${esc(res.branch_name)}"`, 'success', 4000);
+    showToast(` تم تسجيل الجهاز في "${esc(res.branch_name)}"`, 'success', 4000);
     closeModal('register-device-modal');
     loadDevices();
   } else {
@@ -4803,7 +4826,7 @@ async function openQRCodeModal() {
     img.style.cssText = 'width: 250px; height: 250px; display: block;';
     qrContainer.appendChild(img);
     
-    console.log('✅ QR Code مع الرابط:', remoteUrl);
+    console.log(' QR Code مع الرابط:', remoteUrl);
   } catch (e) {
     console.error('QR Error:', e);
     qrContainer.innerHTML = '<div style="padding: 40px;">خطأ في توليد QR</div>';
@@ -4817,7 +4840,7 @@ async function openQRCodeModal() {
    Initialize
    ===================================================== */
 (async function init() {
-  console.log('%c🏪 المنارة POS v1.0.0', 'font-size: 16px; font-weight: bold;');
+  console.log('%c المنارة POS v1.0.0', 'font-size: 16px; font-weight: bold;');
   const restored = (await qrLoginFromHash()) || await restoreSession();
   if (!restored) {
     // اظهار شاشة الدخول
@@ -4829,7 +4852,7 @@ async function openQRCodeModal() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then(() => console.log('✅ Service Worker registered'))
+      .then(() => console.log(' Service Worker registered'))
       .catch(e => console.log('SW registration failed:', e));
   });
 }
@@ -4838,7 +4861,7 @@ if ('serviceWorker' in navigator) {
 <!-- نافذة تفعيل الاشتراك -->
 <div id="subscriptionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
   <div style="background:white; padding:30px; border-radius:10px; width:400px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
-    <h3 style="color:#d9534f; margin-top:0;">⚠️ اشتراك المنظومة منتهي</h3>
+    <h3 style="color:#d9534f; margin-top:0;"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> اشتراك المنظومة منتهي</h3>
     <p style="color:#666; margin-bottom:20px;">يرجى إدخال كود التفعيل الخاص بك لتجديد الاشتراك فوراً.</p>
     <input type="text" id="activationCode" placeholder="MNR-MONTH-XXXX-XXXX-XXXX-XXXX" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; text-transform:uppercase; text-align:center; font-size:16px;">
     <input type="text" id="activationTenantCode" placeholder="رمز المتجر (إن طُلب)" style="display:none;width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:5px;text-align:center;direction:ltr">
@@ -4867,17 +4890,17 @@ function activateSubscription() {
   .then(function(data) {
     if (data.ok || data.success) {
       resultDiv.style.color = "green";
-      resultDiv.textContent = "✅ " + (data.message || "تم التفعيل");
+      resultDiv.textContent = " " + (data.message || "تم التفعيل");
       setTimeout(function() { location.reload(); }, 2000);
     } else {
       if (data.code === "TENANT_CODE_REQUIRED" && tc) tc.style.display = "block";
       resultDiv.style.color = "red";
-      resultDiv.textContent = "❌ " + (data.error || "فشل التفعيل");
+      resultDiv.textContent = " " + (data.error || "فشل التفعيل");
     }
   })
   .catch(function() {
     resultDiv.style.color = "red";
-    resultDiv.textContent = "❌ حدث خطأ في الاتصال";
+    resultDiv.textContent = " حدث خطأ في الاتصال";
   });
 }
 
@@ -4891,7 +4914,7 @@ window.fetch = function() {
           var modal = document.getElementById("subscriptionModal");
           if (modal) modal.style.display = "flex";
           var errDiv = document.getElementById("login-error");
-          if (errDiv) errDiv.textContent = "⚠️ اشتراك المنظومة منتهي. يرجى إدخال كود التفعيل أدناه.";
+          if (errDiv) errDiv.textContent = " اشتراك المنظومة منتهي. يرجى إدخال كود التفعيل أدناه.";
         }
       }).catch(function(e){});
     }
@@ -4967,7 +4990,7 @@ window.saveCloudUrl = function() {
   if (input) {
     const val = input.value.trim();
     localStorage.setItem("manara_cloud_url", val);
-    alert("✅ تم حفظ الرابط السحابي بنجاح!");
+    alert(" تم حفظ الرابط السحابي بنجاح!");
     generateQRCode();
   }
 };

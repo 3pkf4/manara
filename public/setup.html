@@ -70,6 +70,9 @@ input,button,select{font-family:inherit;font-size:16px;}
 code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size:12px;direction:ltr;display:inline-block;}
 @media(max-width:560px){.c{padding:20px 14px;}.logo{width:64px;height:64px;}.hd h1{font-size:22px;}.st{font-size:18px;}.r2{grid-template-columns:1fr;}.pc{width:32px;height:32px;font-size:12px;}.pl{font-size:9px;}}
 </style>
+<link rel="stylesheet" href="/css/ui.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="/js/icons.js"></script>
 </head>
 <body>
 <div class="bg"></div>
@@ -93,7 +96,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
   <!-- الخطوة 1 -->
   <div class="step active" id="s1">
-    <h2 class="st">🔐 رمز الإعداد</h2>
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-lock"/></svg> رمز الإعداد</h2>
     <p class="sd">أدخل رمز الإعداد الذي حصلت عليه عند تثبيت النظام.</p>
 
     <div class="alert ai">
@@ -120,7 +123,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
   <!-- الخطوة 2 -->
   <div class="step" id="s2">
-    <h2 class="st">🏪 معلومات المتجر</h2>
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> معلومات المتجر</h2>
     <p class="sd">أدخل المعلومات الأساسية لمتجرك.</p>
 
     <div class="f">
@@ -170,7 +173,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
   <!-- الخطوة 3 -->
   <div class="step" id="s3">
-    <h2 class="st">👤 حساب المالك</h2>
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg> حساب المالك</h2>
     <p class="sd">أنشئ حسابك الرئيسي للدخول إلى النظام.</p>
 
     <div class="alert aw">
@@ -202,7 +205,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
   <!-- الخطوة 4 -->
   <div class="step" id="s4">
-    <h2 class="st">🏢 الفرع الأول</h2>
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-building"/></svg> الفرع الأول</h2>
     <p class="sd">أضف فرعك الأول (الرئيسي).</p>
 
     <div class="f">
@@ -228,7 +231,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
   <!-- الخطوة 5 -->
   <div class="step" id="s5">
-    <h2 class="st">✅ جاهز للبدء!</h2>
+    <h2 class="st"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg> جاهز للبدء!</h2>
     <p class="sd">راجع البيانات قبل إتمام الإعداد.</p>
 
     <div class="sum">
@@ -246,7 +249,7 @@ code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-size
 
     <div class="act">
       <button class="bs" onclick="go(4)">← السابق</button>
-      <button class="bp" onclick="completeSetup()" id="b5">🚀 إتمام الإعداد</button>
+      <button class="bp" onclick="completeSetup()" id="b5">إتمام الإعداد</button>
     </div>
   </div>
 </div>
@@ -319,7 +322,7 @@ async function verifyToken() {
     const d = await r.json();
     if (d.ok) {
       S.token = token;
-      toast('✅ الرمز صحيح', 's');
+      toast(' الرمز صحيح', 's');
       setTimeout(() => go(2), 500);
     } else {
       toast(d.error || 'الرمز غير صحيح', 'e');
@@ -374,17 +377,17 @@ async function completeSetup() {
     if (d.ok) {
       localStorage.setItem('manara_token', d.token);
       localStorage.setItem('manara_user', JSON.stringify(d.user));
-      toast('🎉 تم الإعداد بنجاح!', 's');
+      toast(' تم الإعداد بنجاح!', 's');
       setTimeout(() => window.location.href = '/', 1200);
     } else {
       toast(d.error || 'فشل الإعداد', 'e');
       b.disabled = false;
-      b.innerHTML = '🚀 إتمام الإعداد';
+      b.innerHTML = 'إتمام الإعداد';
     }
   } catch(e) {
     toast('خطأ في الاتصال', 'e');
     b.disabled = false;
-    b.innerHTML = '🚀 إتمام الإعداد';
+    b.innerHTML = 'إتمام الإعداد';
   }
 }
 

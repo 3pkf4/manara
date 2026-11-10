@@ -1,0 +1,9 @@
+/* مكوّنات مشتركة لكل الصفحات: أيقونات الخط، أرقام ثابتة العرض، تركيز واضح، إشعارات */
+svg.ico{ width:1.15em; height:1.15em; vertical-align:-.2em; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+table, .stat-value, .kpi b, td, th, input[type=number]{ font-variant-numeric:tabular-nums; }
+:focus-visible{ outline:2px solid #f2a900; outline-offset:2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible{ outline-offset:0; }
+.toast{ display:flex; align-items:center; gap:8px; font-weight:500; }
+.toast svg.ico{ width:1.25em; height:1.25em; }
+code, kbd, pre, .mono{ font-family:ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }

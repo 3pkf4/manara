@@ -291,13 +291,16 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
   .top-btn span{display:none;}
 }
 </style>
+<link rel="stylesheet" href="/css/ui.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="/js/icons.js"></script>
 </head>
 <body>
 
 <!-- Login -->
 <div id="login-view">
   <div class="login-box">
-    <h1>👑 لوحة المالك</h1>
+    <h1><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-crown"/></svg> لوحة المالك</h1>
     <p>Manara Admin Panel</p>
     <form onsubmit="event.preventDefault(); adminLogin();">
       <div class="input-group">
@@ -411,7 +414,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
       <div class="data-card">
         <div style="padding:16px;border-bottom:1px solid var(--border);">
           <h3 style="font-size:14px;font-weight:700;">
-            💰 إجمالي المبيعات عبر المنظومة
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wallet"/></svg> إجمالي المبيعات عبر المنظومة
           </h3>
         </div>
         <div class="stats-grid" style="margin:16px;">
@@ -431,7 +434,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
       <div class="data-card">
         <div style="padding:16px;border-bottom:1px solid var(--border);">
           <h3 style="font-size:14px;font-weight:700;">
-            🆕 أحدث العملاء المسجلين
+            أحدث العملاء المسجلين
           </h3>
         </div>
         <div class="table-scroll">
@@ -467,8 +470,8 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
                    placeholder="ابحث بالاسم أو الكود أو الهاتف..."
                    oninput="loadTenants()">
           </div>
-          <button class="btn" onclick="openCodesModal()" style="margin-inline-end:8px">🔑 أكواد الترخيص</button>
-          <button class="btn" onclick="openPricesModal()" style="margin-inline-end:8px">💳 أسعار الدفع الإلكتروني</button>
+          <button class="btn" onclick="openCodesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> أكواد الترخيص</button>
+          <button class="btn" onclick="openPricesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> أسعار الدفع الإلكتروني</button>
           <button class="btn btn-primary" onclick="openCreateTenantModal()">
             <svg class="icon icon-sm" viewBox="0 0 24 24">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -641,7 +644,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
 
 <div class="modal-overlay" id="prices-modal">
   <div class="modal">
-    <div class="modal-header"><h3>💳 أسعار الباقات (MyPay)</h3><button class="modal-close" onclick="closeModal('prices-modal')">✕</button></div>
+    <div class="modal-header"><h3><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> أسعار الباقات (MyPay)</h3><button class="modal-close" onclick="closeModal('prices-modal')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button></div>
     <div class="modal-body">
       <p id="pr-note" style="font-size:13px;color:#64748b;margin-top:0"></p>
       <div id="pr-list"></div>
@@ -652,8 +655,8 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
 <div class="modal-overlay" id="codes-modal">
   <div class="modal">
     <div class="modal-header">
-      <h3>🔑 توليد أكواد ترخيص</h3>
-      <button class="modal-close" onclick="closeModal('codes-modal')">✕</button>
+      <h3><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> توليد أكواد ترخيص</h3>
+      <button class="modal-close" onclick="closeModal('codes-modal')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-group"><label>الباقة</label>
@@ -665,7 +668,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
       <div class="form-group"><label>ربط بعميل محدد (اختياري)</label>
         <select id="lc_tenant"><option value="">— غير مرتبط (يصلح لأي عميل) —</option></select></div>
       <button class="btn btn-primary" id="btn-gen-codes" onclick="generateCodes()">توليد</button>
-      <p style="font-size:12px;color:#888;margin-top:10px">⚠️ تظهر الأكواد مرة واحدة فقط ولا تُحفظ في النظام بصيغتها الأصلية. انسخها الآن.</p>
+      <p style="font-size:12px;color:#888;margin-top:10px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> تظهر الأكواد مرة واحدة فقط ولا تُحفظ في النظام بصيغتها الأصلية. انسخها الآن.</p>
       <textarea id="lc_result" readonly rows="6" style="width:100%;margin-top:8px;direction:ltr;font-family:monospace"></textarea>
       <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('lc_result').value)">نسخ</button>
     </div>
@@ -937,7 +940,7 @@ function renderTenantsTable() {
 async function openPricesModal() {
   const r = await api('/payments/plan-prices');
   if (!r.ok) return showToast(r.error || 'تعذر التحميل', 'error');
-  document.getElementById('pr-note').textContent = r.configured ? 'بوابة MyPay مهيّأة. الباقة بلا سعر أو الموقوفة لا تظهر للعملاء.' : '⚠️ مفاتيح MyPay غير مضبوطة في ملف .env، لن يظهر الدفع للعملاء حتى تُضبط.';
+  document.getElementById('pr-note').textContent = r.configured ? 'بوابة MyPay مهيّأة. الباقة بلا سعر أو الموقوفة لا تظهر للعملاء.' : ' مفاتيح MyPay غير مضبوطة في ملف .env، لن يظهر الدفع للعملاء حتى تُضبط.';
   document.getElementById('pr-list').innerHTML = r.data.map(p => `<div class="form-group" style="display:flex;gap:8px;align-items:center">
     <span style="flex:1">${esc(p.name)}</span>
     <input type="number" min="0.01" step="0.01" id="pp_${p.plan}" value="${p.price ?? ''}" placeholder="السعر د.ل" style="width:110px">
@@ -1059,7 +1062,7 @@ async function viewTenant(id) {
     </div>
 
     <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
-      📋 معلومات العميل
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clipboard"/></svg> معلومات العميل
     </h4>
     <table class="data-table" style="min-width:auto;margin-bottom:20px;">
       <tr><td style="width:150px;"><strong>الكود</strong></td><td>${esc(tenant.tenant_code)}</td></tr>
@@ -1076,7 +1079,7 @@ async function viewTenant(id) {
     </table>
 
     <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
-      👥 المستخدمون (${users.length})
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg> المستخدمون (${users.length})
     </h4>
     <table class="data-table" style="min-width:auto;margin-bottom:20px;">
       <thead><tr><th>اسم الدخول</th><th>الاسم</th><th>الدور</th><th>آخر دخول</th></tr></thead>
@@ -1093,7 +1096,7 @@ async function viewTenant(id) {
     </table>
 
     <h4 style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--text-secondary);">
-      🏪 الفروع (${branches.length})
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> الفروع (${branches.length})
     </h4>
     <table class="data-table" style="min-width:auto;">
       <thead><tr><th>الكود</th><th>الاسم</th><th>العنوان</th><th>رصيد الخزينة</th></tr></thead>
@@ -1203,9 +1206,9 @@ async function loadActivity() {
       <div class="activity-content">
         <div class="activity-action">${esc(actionLabels[a.action] || a.action)}</div>
         <div class="activity-meta">
-          ${a.user_name ? `<span>👤 ${esc(a.user_name)}</span>` : ''}
-          ${a.business_name ? `<span>🏪 ${esc(a.business_name)}</span>` : ''}
-          <span>⏰ ${new Date(a.created_at).toLocaleString('ar-LY')}</span>
+          ${a.user_name ? `<span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg> ${esc(a.user_name)}</span>` : ''}
+          ${a.business_name ? `<span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-store"/></svg> ${esc(a.business_name)}</span>` : ''}
+          <span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"/></svg> ${new Date(a.created_at).toLocaleString('ar-LY')}</span>
         </div>
       </div>
     </div>
@@ -1241,7 +1244,7 @@ async function restoreSession() {
    Init
    ============================================================ */
 (async function init() {
-  console.log('%c👑 لوحة المالك', 'font-size:16px;font-weight:bold;');
+  console.log('%c لوحة المالك', 'font-size:16px;font-weight:bold;');
   await restoreSession();
 })();
 

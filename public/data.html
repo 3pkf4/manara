@@ -53,6 +53,9 @@ pre{background:#071428;color:#d8e4fa;padding:12px;border-radius:10px;overflow-x:
 details{margin-top:8px}summary{cursor:pointer;font-weight:700}
 #toast{position:fixed;inset-inline:16px;bottom:16px;max-width:420px;margin-inline:auto;padding:12px 16px;border-radius:12px;background:#0a1c38;color:#fff;display:none;z-index:50;text-align:center}
 </style>
+<link rel="stylesheet" href="/css/ui.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="/js/icons.js"></script>
 </head>
 <body>
 <header>
@@ -64,10 +67,10 @@ details{margin-top:8px}summary{cursor:pointer;font-weight:700}
 <main>
 
   <section class="card" id="export">
-    <h2>⬇️ تصدير البيانات</h2>
+    <h2><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-download"/></svg> تصدير البيانات</h2>
     <p class="sub">ملفات CSV تفتح مباشرة في Excel بالعربية. النسخة الكاملة JSON تحوي كل بيانات متجرك (بدون كلمات المرور).</p>
     <div class="grid">
-      <button class="tile main" data-dl="backup"><b>💾 نسخة احتياطية كاملة</b><span>JSON: منتجات، عملاء، موردون، فواتير، مصروفات، إعدادات</span></button>
+      <button class="tile main" data-dl="backup"><b><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-save"/></svg> نسخة احتياطية كاملة</b><span>JSON: منتجات، عملاء، موردون، فواتير، مصروفات، إعدادات</span></button>
       <button class="tile" data-dl="products"><b>المنتجات</b><span>CSV — يصلح لإعادة الاستيراد</span></button>
       <button class="tile" data-dl="customers"><b>العملاء</b><span>CSV مع الأرصدة والنقاط</span></button>
       <button class="tile" data-dl="inventory"><b>تقييم المخزون</b><span>CSV بقيمة المخزون بالتكلفة والبيع</span></button>
@@ -81,7 +84,7 @@ details{margin-top:8px}summary{cursor:pointer;font-weight:700}
   </section>
 
   <section class="card" id="import">
-    <h2>⬆️ استيراد البيانات</h2>
+    <h2><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-upload"/></svg> استيراد البيانات</h2>
     <p class="sub">استورد منتجاتك أو عملاءك أو مورّديك من ملف CSV (Excel → حفظ باسم → CSV UTF-8) أو من نسخة JSON سبق تصديرها. تستطيع المعاينة أولاً دون حفظ أي شيء.</p>
     <div class="row" style="margin-top:0">
       <div class="field"><label>نوع البيانات</label>
@@ -115,7 +118,7 @@ details{margin-top:8px}summary{cursor:pointer;font-weight:700}
   </section>
 
   <section class="card">
-    <h2>🔎 أين بياناتي وكيف أصل إليها؟</h2>
+    <h2><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg> أين بياناتي وكيف أصل إليها؟</h2>
     <p class="sub">كل شيء مخزّن في قاعدة بيانات PostgreSQL على الخادم الذي يعمل عليه النظام، وهي المصدر الأصلي.</p>
     <ul style="margin:0;padding-inline-start:20px">
       <li><b>من داخل النظام:</b> هذه الصفحة (نسخة كاملة JSON + ملفات CSV) — متاحة للمدير فقط.</li>

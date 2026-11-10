@@ -2,8 +2,8 @@
    Service Worker — يخزّن الملفات للعمل بدون إنترنت
    ============================================================ */
 
-const CACHE_NAME = 'manara-pos-v2.8.0';
-const RUNTIME_CACHE = 'manara-runtime-v2.8.0';
+const CACHE_NAME = 'manara-pos-v3.0.0';
+const RUNTIME_CACHE = 'manara-runtime-v3.0.0';
 
 // الملفات التي تُخزّن دائماً
 const PRECACHE_URLS = [
@@ -14,6 +14,8 @@ const PRECACHE_URLS = [
   '/inventory.html',
   '/js/barcode.js',
   '/css/brand.css',
+  '/css/ui.css', '/css/modern.css', '/img/logo-full.png', '/img/logo-mark-light.png',
+  '/js/icons.js',
   '/js/offline.js',
   '/js/save-file.js',
   '/icons/logo.svg',

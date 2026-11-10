@@ -61,6 +61,9 @@ th{color:var(--muted)}
   #print-area .label{border:0;break-inside:avoid;page-break-inside:avoid}
 }
 </style>
+<link rel="stylesheet" href="/css/ui.css">
+<link rel="stylesheet" href="/css/modern.css">
+<script src="/js/icons.js"></script>
 </head>
 <body>
 <header>
@@ -93,8 +96,8 @@ th{color:var(--muted)}
     <div class="row" style="margin-top:0;align-items:center"><h2 id="stk-title" style="flex:1"></h2><button class="btn sec" id="stk-back">← الجلسات</button></div>
     <div class="row">
       <div class="field" style="flex:3"><label>امسح الباركود (الماسح يعمل تلقائياً) أو اكتبه ثم Enter</label>
-        <input id="stk-code" class="big" data-scan-target="1" autocomplete="off" inputmode="numeric" placeholder="▮▮▮ امسح الآن"></div>
-      <button class="btn" id="stk-cam">📷 كاميرا</button>
+        <input id="stk-code" class="big" data-scan-target="1" autocomplete="off" inputmode="numeric" placeholder="امسح الباركود الآن"></div>
+      <button class="btn" id="stk-cam"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg> كاميرا</button>
     </div>
     <div class="banner" id="stk-banner">بانتظار المسح…</div>
     <div class="row"><div class="field" style="flex:3"><label>أو ابحث بالاسم وأدخل الكمية الفعلية</label><input id="stk-search" placeholder="اسم المنتج" autocomplete="off"><div id="stk-pick" class="pick hidden"></div></div>
@@ -110,7 +113,7 @@ th{color:var(--muted)}
   <div class="card">
     <h2>تسوية مخزون بسبب</h2>
     <p class="sub">للتالف والمنتهي والفاقد والاستهلاك الداخلي. كل تسوية تُسجَّل باسمك وسببها ولا يمكن حذفها.</p>
-    <div class="row" style="margin-top:0"><div class="field" style="flex:3"><label>المنتج (امسح الباركود أو ابحث)</label><input id="adj-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="adj-pick" class="pick hidden"></div></div><button class="btn sec" id="adj-cam">📷</button></div>
+    <div class="row" style="margin-top:0"><div class="field" style="flex:3"><label>المنتج (امسح الباركود أو ابحث)</label><input id="adj-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="adj-pick" class="pick hidden"></div></div><button class="btn sec" id="adj-cam" aria-label="مسح بالكاميرا"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button></div>
     <div class="banner" id="adj-sel">لم يُختر منتج</div>
     <div class="row">
       <div class="field"><label>السبب</label><select id="adj-reason"></select></div>
@@ -130,7 +133,7 @@ th{color:var(--muted)}
   <div class="card"><h2>تحويل مخزون بين الفروع</h2>
     <p class="sub">يُخصم من فرع المصدر ويُضاف فوراً للفرع المستلم (يُنشأ المنتج هناك تلقائياً إن لم يوجد).</p>
     <div class="row" style="margin-top:0"><div class="field" id="trf-from-wrap"><label>من فرع</label><select id="trf-from"></select></div><div class="field"><label>إلى فرع</label><select id="trf-to"></select></div></div>
-    <div class="row"><div class="field" style="flex:3"><label>أضف صنفاً (امسح أو ابحث)</label><input id="trf-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="trf-pick" class="pick hidden"></div></div><button class="btn sec" id="trf-cam">📷</button></div>
+    <div class="row"><div class="field" style="flex:3"><label>أضف صنفاً (امسح أو ابحث)</label><input id="trf-search" data-scan-target="1" autocomplete="off" placeholder="باركود أو اسم"><div id="trf-pick" class="pick hidden"></div></div><button class="btn sec" id="trf-cam" aria-label="مسح بالكاميرا"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-camera"/></svg></button></div>
     <div class="scroll"><table><thead><tr><th>المنتج</th><th>المتوفر</th><th>الكمية</th><th></th></tr></thead><tbody id="trf-items"></tbody></table></div>
     <div class="row"><div class="field"><label>ملاحظة</label><input id="trf-notes"></div><button class="btn" id="trf-go">تنفيذ التحويل</button></div>
   </div>
@@ -177,7 +180,7 @@ th{color:var(--muted)}
       <label style="display:flex;gap:6px;align-items:center;margin:0 0 10px"><input type="checkbox" id="lb-price" checked style="width:auto"> يظهر السعر</label>
       <button class="btn acc" id="lb-gen">توليد باركود للمنتجات الناقصة</button></div>
     <div class="row"><div class="field" style="flex:3"><label>بحث وإضافة</label><input id="lb-search" autocomplete="off" placeholder="اسم أو باركود"><div id="lb-pick" class="pick hidden"></div></div>
-      <button class="btn sec" id="lb-all">إضافة كل المنتجات</button><button class="btn sec" id="lb-clear">مسح القائمة</button><button class="btn" id="lb-print">🖨️ طباعة</button></div>
+      <button class="btn sec" id="lb-all">إضافة كل المنتجات</button><button class="btn sec" id="lb-clear">مسح القائمة</button><button class="btn" id="lb-print"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-printer"/></svg> طباعة</button></div>
     <div id="lb-count" class="sub" style="margin-top:8px"></div>
     <div id="labels-preview"></div>
   </div>
@@ -358,7 +361,7 @@ let RO = [];
 async function loadReorder() {
   const r = await api(`/inventory/reorder?days=${$('ro-days').value}&cover=${$('ro-cover').value}`); if (!r.ok) return toast(r.error);
   RO = r.data; $('ro-n').textContent = RO.length; $('ro-cost').textContent = f2(r.total_est_cost);
-  $('ro-rows').innerHTML = RO.map(x => `<tr><td>${esc(x.name)}</td><td>${f3(x.stock)}</td><td>${x.avg_daily}</td><td class="${x.days_left !== null && x.days_left < 3 ? 'neg' : ''}">${x.days_left === null ? '—' : x.days_left}</td><td><b>${x.suggested_qty}</b> ${esc(x.unit || '')}</td><td>${f2(x.est_cost)}</td><td>${esc(x.supplier_name || '—')}</td></tr>`).join('') || '<tr><td colspan="7">لا توجد أصناف تحتاج إعادة طلب 👍</td></tr>';
+  $('ro-rows').innerHTML = RO.map(x => `<tr><td>${esc(x.name)}</td><td>${f3(x.stock)}</td><td>${x.avg_daily}</td><td class="${x.days_left !== null && x.days_left < 3 ? 'neg' : ''}">${x.days_left === null ? '—' : x.days_left}</td><td><b>${x.suggested_qty}</b> ${esc(x.unit || '')}</td><td>${f2(x.est_cost)}</td><td>${esc(x.supplier_name || '—')}</td></tr>`).join('') || '<tr><td colspan="7">لا توجد أصناف تحتاج إعادة طلب </td></tr>';
 }
 $('ro-go').onclick = loadReorder;
 $('ro-csv').onclick = async () => {

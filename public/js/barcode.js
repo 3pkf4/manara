@@ -216,8 +216,8 @@
         <div style="position:absolute;left:8%;right:8%;top:50%;height:2px;background:#ff3b30aa"></div>
       </div>
       <div id="bc-msg" style="color:#ffd36b;font-size:13px;min-height:20px;text-align:center"></div>
-      <div style="display:flex;gap:10px"><button id="bc-torch" style="display:none;padding:10px 16px;border-radius:10px;border:0;background:#fff2;color:#fff">💡 الفلاش</button>
-      <button id="bc-manual" style="padding:10px 16px;border-radius:10px;border:0;background:#fff2;color:#fff">⌨️ إدخال يدوي</button>
+      <div style="display:flex;gap:10px"><button id="bc-torch" style="display:none;padding:10px 16px;border-radius:10px;border:0;background:#fff2;color:#fff"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bulb"/></svg> الفلاش</button>
+      <button id="bc-manual" style="padding:10px 16px;border-radius:10px;border:0;background:#fff2;color:#fff">إدخال يدوي</button>
       <button id="bc-close" style="padding:10px 22px;border-radius:10px;border:0;background:#f2a900;color:#1a1300;font-weight:700">إغلاق</button></div>`;
     document.body.appendChild(wrap);
     const video = wrap.querySelector('video'), msg = wrap.querySelector('#bc-msg');
