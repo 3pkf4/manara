@@ -2,8 +2,8 @@
    Service Worker — يخزّن الملفات للعمل بدون إنترنت
    ============================================================ */
 
-const CACHE_NAME = 'manara-pos-v3.1.1';
-const RUNTIME_CACHE = 'manara-runtime-v3.1.1';
+const CACHE_NAME = 'manara-pos-v3.1.2';
+const RUNTIME_CACHE = 'manara-runtime-v3.1.2';
 
 // الملفات التي تُخزّن دائماً
 const PRECACHE_URLS = [

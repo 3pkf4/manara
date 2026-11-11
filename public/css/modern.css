@@ -249,3 +249,18 @@ body { font-feature-settings: "tnum" 1, "kern" 1; line-height: 1.6; }
 h1, h2, h3, .stat-value, .page-title, .btn-login, .login-box h1 { font-weight: 700; }
 b, strong, th, .btn, .cat-btn, label { font-weight: 600; }
 * { font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif; }
+
+/* ---------- شريط السلة العائم (الهاتف) ---------- */
+#cart-fab { display: none; }
+@media (max-width: 768px) {
+  #cart-fab { position: fixed; z-index: 850; inset-inline: 12px; bottom: calc(var(--mobile-nav-height) + 12px + var(--safe-bottom));
+    height: 54px; border-radius: 16px; background: var(--brand); color: #fff; align-items: center; gap: 10px; padding: 0 16px;
+    box-shadow: 0 10px 28px rgba(9,20,40,.35); font-weight: 700; font-size: 14px; display: flex;
+    transform: translateY(140%); opacity: 0; pointer-events: none; transition: transform .38s var(--ease-spring), opacity .2s; }
+  #cart-fab.has:not(.away) { transform: none; opacity: 1; pointer-events: auto; }
+  #cart-fab #cart-fab-n { min-width: 24px; height: 24px; border-radius: 12px; background: var(--accent); color: #1a1305; display: grid; place-items: center; font-size: 12px; padding: 0 6px; }
+  #cart-fab .grow { flex: 1; text-align: start; }
+  #cart-fab b { font-variant-numeric: tabular-nums; }
+  body:has(#view-pos:not(.active)) #cart-fab { display: none; }
+  #manara-sub-timer { bottom: calc(var(--mobile-nav-height) + 76px + var(--safe-bottom)) !important; }
+}

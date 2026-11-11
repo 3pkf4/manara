@@ -1,6 +1,6 @@
 {
   "name": "manara-saas",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "منظومة المنارة POS & ERP - نظام متعدد العملاء",
   "main": "server/server.js",
   "scripts": {

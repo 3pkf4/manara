@@ -1862,7 +1862,8 @@ window.submitSubscriptionCode = async function() {
   </main>
 
   <!-- Mobile Nav -->
-  <nav id="mobile-nav">
+  <button type="button" id="cart-fab" aria-label="عرض السلة" onclick="document.querySelector('.pos-cart').scrollIntoView({behavior:'smooth',block:'start'})"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cart"/></svg><span id="cart-fab-n">0</span><span class="grow">عرض السلة</span><b id="cart-fab-t">0.00</b></button>
+<nav id="mobile-nav">
     <div class="mobile-nav-items">
       <div class="mobile-nav-item active" onclick="switchView('pos')" id="mnav-pos">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cart"/></svg>
@@ -2701,7 +2702,21 @@ function updateCartUI() {
   document.getElementById('cart-total').textContent = total.toFixed(2) + ' د.ل';
 
   btnCheckout.disabled = APP.cart.length === 0;
+  const fab = document.getElementById('cart-fab');
+  if (fab) {
+    document.getElementById('cart-fab-n').textContent = count;
+    document.getElementById('cart-fab-t').textContent = total.toFixed(2) + ' د.ل';
+    fab.classList.toggle('has', APP.cart.length > 0);
+  }
 }
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  document.addEventListener('DOMContentLoaded', function () {
+    var cart = document.querySelector('.pos-cart'), fab = document.getElementById('cart-fab');
+    if (!cart || !fab) return;
+    new IntersectionObserver(function (e) { fab.classList.toggle('away', e[0].isIntersecting); }, { threshold: 0.35 }).observe(cart);
+  });
+})();
 
 function selectCartItem(i) {
   APP.selectedCartIndex = i;
