@@ -4612,59 +4612,19 @@ async function openQRCodeModal() {
 // Service Worker للـ PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    var hadController = !!navigator.serviceWorker.controller, reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      // نسخة جديدة تسلّمت التحكم: أعد التحميل مرة واحدة حتى لا تختلط ملفات قديمة بجديدة
+      if (hadController && !reloaded) { reloaded = true; location.reload(); }
+    });
     navigator.serviceWorker.register('/service-worker.js')
-      .then(() => console.log(' Service Worker registered'))
+      .then((reg) => { reg.update && reg.update(); })
       .catch(e => console.log('SW registration failed:', e));
   });
 }
 </script>
 
-<!-- نافذة تفعيل الاشتراك -->
-<div id="subscriptionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-  <div style="background:white; padding:30px; border-radius:10px; width:400px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
-    <h3 style="color:#d9534f; margin-top:0;"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg> اشتراك المنظومة منتهي</h3>
-    <p style="color:#666; margin-bottom:20px;">يرجى إدخال كود التفعيل الخاص بك لتجديد الاشتراك فوراً.</p>
-    <input type="text" id="activationCode" placeholder="MNR-MONTH-XXXX-XXXX-XXXX-XXXX" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; text-transform:uppercase; text-align:center; font-size:16px;">
-    <input type="text" id="activationTenantCode" placeholder="رمز المتجر (إن طُلب)" style="display:none;width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:5px;text-align:center;direction:ltr">
-    <button onclick="activateSubscription()" style="background:#28a745; color:white; border:none; padding:10px 20px; width:100%; border-radius:5px; font-size:16px; cursor:pointer;">تفعيل الكود الآن</button>
-    <div id="activationResult" style="margin-top:15px; font-size:14px;"></div>
-  </div>
-</div>
 <script>
-function activateSubscription() {
-  var code = document.getElementById("activationCode").value.trim();
-  var resultDiv = document.getElementById("activationResult");
-  if (!code) {
-    resultDiv.textContent = "الرجاء إدخال الكود";
-    resultDiv.style.color = "red";
-    return;
-  }
-  resultDiv.style.color = "";
-  resultDiv.textContent = "جاري التحقق والتفعيل...";
-  var tc = document.getElementById("activationTenantCode");
-  fetch("/api/subscription/activate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code: code, tenant_code: tc && tc.value ? tc.value.trim() : undefined })
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (data.ok || data.success) {
-      resultDiv.style.color = "green";
-      resultDiv.textContent = " " + (data.message || "تم التفعيل");
-      setTimeout(function() { location.reload(); }, 2000);
-    } else {
-      if (data.code === "TENANT_CODE_REQUIRED" && tc) tc.style.display = "block";
-      resultDiv.style.color = "red";
-      resultDiv.textContent = " " + (data.error || "فشل التفعيل");
-    }
-  })
-  .catch(function() {
-    resultDiv.style.color = "red";
-    resultDiv.textContent = " حدث خطأ في الاتصال";
-  });
-}
-
 var originalFetch = window.fetch;
 window.fetch = function() {
   var args = arguments;
