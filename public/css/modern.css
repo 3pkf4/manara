@@ -166,3 +166,86 @@ tr:hover td { background: var(--gray-50); }
   #manara-sub-timer:not(.open) svg { display: none; }
   #manara-sub-timer:not(.open)::before { margin: 0; }
 }
+
+/* ---------- اتساق الصفحات الفرعية والجداول ---------- */
+.mobile-nav-item:not([style*="none"]) { display: flex !important; flex-direction: column; align-items: center; justify-content: center; }
+.top-logo, .logo, header > img { background: var(--brand) !important; border-radius: 12px; padding: 5px; overflow: hidden; }
+.top-logo img, .logo img { width: 100%; height: 100%; object-fit: contain; }
+header > img { width: 40px !important; height: 40px !important; object-fit: contain; flex: none; }
+@media (max-width: 768px) {
+  table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  td, th { padding: 10px 12px; }
+}
+header > a, header a.back, header .back { color: var(--brand) !important; font-weight: 700; }
+:root[data-theme="dark"] header > a, :root[data-theme="dark"] header .back { color: #f1d9a3 !important; }
+
+/* ============================================================
+   الحركة: منحنيات ناعمة موحّدة، وظهور متدرّج واحد لكل صفحة
+   ============================================================ */
+:root { --ease: cubic-bezier(.22,.8,.24,1); --ease-spring: cubic-bezier(.34,1.4,.5,1); --t-fast: 140ms; --t: 240ms; }
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: 160ms var(--ease) both vtOut; }
+::view-transition-new(root) { animation: 260ms var(--ease) both vtIn; }
+@keyframes vtOut { to { opacity: 0; } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(6px); } }
+
+/* ضغط الأزرار والبطاقات */
+.btn, .btn-primary, .btn-outline, .btn-pay, .btn-login, .btn-confirm, .cat-btn, .theme-btn, .nav-item, .mobile-nav-item, button {
+  transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+              box-shadow var(--t) var(--ease), transform var(--t-fast) var(--ease), opacity var(--t-fast); }
+.btn:active, .btn-primary:active, .btn-outline:active, .btn-pay:active, .btn-login:active, .btn-confirm:active, .cat-btn:active, .theme-btn:active { transform: scale(.97); }
+.product-card:active { transform: scale(.975); }
+.btn-primary:hover, .btn-confirm:hover, .btn-login:hover { box-shadow: 0 6px 16px rgba(18,38,74,.22); transform: translateY(-1px); }
+.btn:disabled, button:disabled { transform: none !important; box-shadow: none !important; }
+.nav-item:hover { transform: translateX(-3px); }
+.nav-item svg { transition: transform var(--t) var(--ease-spring); }
+.nav-item:hover svg, .mobile-nav-item:active svg { transform: scale(1.12); }
+.mobile-nav-item.active svg { transform: translateY(-2px); }
+
+/* دخول الصفحة: المحتوى يظهر بتتابع قصير مرة واحدة */
+.view-container.active { animation: viewIn .34s var(--ease) both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.view-container.active .stat-card, .view-container.active .card, .view-container.active .branch-card,
+.view-container.active .chart-card { animation: riseIn .45s var(--ease) both; }
+.view-container.active .stat-card:nth-child(2), .view-container.active .card:nth-child(2) { animation-delay: 50ms; }
+.view-container.active .stat-card:nth-child(3), .view-container.active .card:nth-child(3) { animation-delay: 100ms; }
+.view-container.active .stat-card:nth-child(4), .view-container.active .card:nth-child(4) { animation-delay: 150ms; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* النوافذ المنبثقة */
+.modal-overlay { animation: fadeIn .22s var(--ease) both; background: rgba(9,20,40,.5); backdrop-filter: blur(6px) saturate(1.1); }
+.modal { animation: modalIn .38s var(--ease-spring) both; }
+@keyframes modalIn { from { opacity: 0; transform: translateY(18px) scale(.965); } to { opacity: 1; transform: none; } }
+@media (max-width: 768px) {
+  .modal { animation: sheetIn .42s var(--ease) both; }
+  @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
+}
+
+/* الإشعارات */
+.toast { animation: toastIn2 .42s var(--ease-spring) both; border-radius: 14px; box-shadow: 0 10px 30px rgba(9,20,40,.28); backdrop-filter: blur(6px); }
+@keyframes toastIn2 { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+.toast.hide { animation: toastOut2 .28s var(--ease) forwards; }
+@keyframes toastOut2 { to { opacity: 0; transform: translateY(10px) scale(.96); } }
+
+/* الدخول والعداد والتحميل */
+.login-box { animation: loginIn .6s var(--ease) both; }
+@keyframes loginIn { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
+.login-logo img { animation: logoIn .9s var(--ease) .1s both; }
+@keyframes logoIn { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+#manara-sub-timer::before { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c, #9aa6bb) 55%, transparent); animation: pulseDot 2.4s ease-out infinite; }
+@keyframes pulseDot { 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.net-badge i { animation: pulseDot 2.4s ease-out infinite; }
+input, select, textarea { transition: border-color var(--t-fast), box-shadow var(--t) var(--ease), background-color var(--t-fast); }
+tr { transition: background-color var(--t-fast); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- الخط: IBM Plex Sans Arabic (هندسي نظيف يناسب الشعار) ---------- */
+html, body, button, input, select, textarea { font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif; }
+body { font-feature-settings: "tnum" 1, "kern" 1; line-height: 1.6; }
+h1, h2, h3, .stat-value, .page-title, .btn-login, .login-box h1 { font-weight: 700; }
+b, strong, th, .btn, .cat-btn, label { font-weight: 600; }
+* { font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif; }

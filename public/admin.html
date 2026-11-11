@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a0a0a">
-<link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
 <title>المنارة - لوحة المالك</title>
 <style>
 :root {
@@ -291,6 +291,9 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
   .top-btn span{display:none;}
 }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/css/ui.css">
 <link rel="stylesheet" href="/css/modern.css">
 <script src="/js/icons.js"></script>
@@ -322,7 +325,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
 <div id="app-view">
   <header class="top">
     <div class="top-brand">
-      <div class="top-logo" style="background:none;overflow:hidden"><img src="/icons/logo.svg" alt="" style="width:100%;height:100%"></div>
+      <div class="top-logo" style="background:none;overflow:hidden"><img src="/img/logo-mark-light.png" alt="" style="width:100%;height:100%"></div>
       <div>
         <div class="top-title">لوحة المالك</div>
         <div class="top-subtitle">Manara Admin</div>
@@ -330,24 +333,15 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     </div>
     <div class="top-actions">
       <button class="top-btn" onclick="loadAll()" title="تحديث">
-        <svg class="icon icon-sm" viewBox="0 0 24 24">
-          <polyline points="23 4 23 10 17 10"/>
-          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-refresh"/></svg>
         <span>تحديث</span>
       </button>
       <button class="top-btn" onclick="window.location.href='/'" title="الواجهة">
-        <svg class="icon icon-sm" viewBox="0 0 24 24">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron"/></svg>
         <span>الواجهة</span>
       </button>
       <button class="top-btn danger" onclick="adminLogout()" title="خروج">
-        <svg class="icon icon-sm" viewBox="0 0 24 24">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-logout"/></svg>
         <span>خروج</span>
       </button>
       <div class="top-user">
@@ -361,27 +355,15 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     <!-- Tabs -->
     <div class="tabs">
       <div class="tab active" data-tab="overview" onclick="switchTab('overview')">
-        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="7" height="9"/>
-          <rect x="14" y="3" width="7" height="5"/>
-          <rect x="14" y="12" width="7" height="9"/>
-          <rect x="3" y="16" width="7" height="5"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-dashboard"/></svg>
         نظرة عامة
       </div>
       <div class="tab" data-tab="tenants" onclick="switchTab('tenants')">
-        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg>
         العملاء
       </div>
       <div class="tab" data-tab="activity" onclick="switchTab('activity')">
-        <svg class="icon icon-sm" style="display:inline;vertical-align:middle;margin-left:4px;" viewBox="0 0 24 24">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pulse"/></svg>
         سجل النشاطات
       </div>
     </div>
@@ -458,10 +440,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     <div id="tab-tenants" style="display:none;">
       <div class="page-header">
         <h2>
-          <svg class="icon icon-lg" viewBox="0 0 24 24">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-          </svg>
+          <svg class="icon icon-lg" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg>
           العملاء
         </h2>
         <div class="page-actions">
@@ -473,10 +452,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
           <button class="btn" onclick="openCodesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg> أكواد الترخيص</button>
           <button class="btn" onclick="openPricesModal()" style="margin-inline-end:8px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-card"/></svg> أسعار الدفع الإلكتروني</button>
           <button class="btn btn-primary" onclick="openCreateTenantModal()">
-            <svg class="icon icon-sm" viewBox="0 0 24 24">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-plus"/></svg>
             عميل جديد
           </button>
         </div>
@@ -511,17 +487,12 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     <div id="tab-activity" style="display:none;">
       <div class="page-header">
         <h2>
-          <svg class="icon icon-lg" viewBox="0 0 24 24">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
+          <svg class="icon icon-lg" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pulse"/></svg>
           سجل النشاطات
         </h2>
         <div class="page-actions">
           <button class="btn btn-outline" onclick="loadActivity()">
-            <svg class="icon icon-sm" viewBox="0 0 24 24">
-              <polyline points="23 4 23 10 17 10"/>
-              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-            </svg>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-refresh"/></svg>
             تحديث
           </button>
         </div>
@@ -540,10 +511,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     <div class="modal-header">
       <h3>إنشاء عميل جديد</h3>
       <button class="modal-close" onclick="closeModal('create-tenant-modal')">
-        <svg class="icon" viewBox="0 0 24 24">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>
       </button>
     </div>
     <div class="modal-body">
@@ -631,10 +599,7 @@ header.top{background:var(--gray-950);color:#fff;padding:16px 24px;
     <div class="modal-header">
       <h3 id="td-title">تفاصيل العميل</h3>
       <button class="modal-close" onclick="closeModal('tenant-detail-modal')">
-        <svg class="icon" viewBox="0 0 24 24">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-x"/></svg>
       </button>
     </div>
     <div class="modal-body" id="td-content"></div>
@@ -906,25 +871,15 @@ function renderTenantsTable() {
         <td>
           <div style="display:flex;gap:4px;justify-content:flex-end;">
             <button class="btn-icon" onclick="viewTenant('${t.id}')" title="عرض">
-              <svg class="icon icon-sm" viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
+              <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-eye"/></svg>
             </button>
             <button class="btn-icon ${t.is_suspended ? 'success' : 'warn'}"
                     onclick="toggleSuspend('${t.id}', ${t.is_suspended})"
                     title="${t.is_suspended ? 'تشغيل' : 'إيقاف'}">
-              <svg class="icon icon-sm" viewBox="0 0 24 24">
-                ${t.is_suspended
-                  ? '<polyline points="20 6 9 17 4 12"/>'
-                  : '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>'}
-              </svg>
+              <svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${t.is_suspended ? 'check' : 'ban'}"/></svg>
             </button>
             <button class="btn-icon" onclick="renewTenant('${t.id}')" title="تجديد">
-              <svg class="icon icon-sm" viewBox="0 0 24 24">
-                <polyline points="23 4 23 10 17 10"/>
-                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-              </svg>
+              <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-refresh"/></svg>
             </button>
           </div>
         </td>
@@ -1199,9 +1154,7 @@ async function loadActivity() {
   list.innerHTML = res.data.map(a => `
     <div class="activity-item">
       <div class="activity-icon">
-        <svg class="icon icon-sm" viewBox="0 0 24 24">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pulse"/></svg>
       </div>
       <div class="activity-content">
         <div class="activity-action">${esc(actionLabels[a.action] || a.action)}</div>

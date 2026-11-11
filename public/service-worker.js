@@ -2,8 +2,8 @@
    Service Worker — يخزّن الملفات للعمل بدون إنترنت
    ============================================================ */
 
-const CACHE_NAME = 'manara-pos-v3.0.0';
-const RUNTIME_CACHE = 'manara-runtime-v3.0.0';
+const CACHE_NAME = 'manara-pos-v3.1.1';
+const RUNTIME_CACHE = 'manara-runtime-v3.1.1';
 
 // الملفات التي تُخزّن دائماً
 const PRECACHE_URLS = [
@@ -84,6 +84,15 @@ self.addEventListener('fetch', (event) => {
   }
 
   // لا تخزّن من نطاقات أخرى (مثل Chart.js CDN)
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    // الخطوط: من الكاش أولاً ثم تُحدَّث؛ تعمل بدون إنترنت بعد أول زيارة
+    event.respondWith(caches.open(RUNTIME_CACHE).then(async (c) => {
+      const hit = await c.match(request);
+      const net = fetch(request).then((r) => { if (r && (r.ok || r.type === 'opaque')) c.put(request, r.clone()); return r; }).catch(() => hit);
+      return hit || net;
+    }));
+    return;
+  }
   if (url.origin !== location.origin) {
     event.respondWith(
       caches.match(request).then(cached => {
